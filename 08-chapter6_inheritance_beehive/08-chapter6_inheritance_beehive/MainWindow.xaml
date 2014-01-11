@@ -35,7 +35,7 @@
                 </GroupBox>
             </StackPanel>
         </Grid>
-        <StackPanel Grid.Row="1" Height="119" HorizontalAlignment="Left" Margin="110,39,0,0" Name="stackPanel2" VerticalAlignment="Top" Width="259" Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Height="119" HorizontalAlignment="Left" Margin="209,50,0,0" Name="stackPanel2" VerticalAlignment="Top" Width="259" Orientation="Horizontal">
             <Button Content="Button" Height="23" Name="button1" Width="75" />
             <Button Content="Button" Height="23" Name="button2" Width="75" />
         </StackPanel>

@@ -48,5 +48,6 @@ namespace _08_chapter6_inheritance_beehive
       edtReport.Text = queen.NextShift();
     }
 
+
   }
 }
