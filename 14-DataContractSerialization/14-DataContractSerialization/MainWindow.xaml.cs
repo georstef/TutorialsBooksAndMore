@@ -57,7 +57,7 @@ namespace _14_DataContractSerialization
       ShowFilename(FILENAME, edtFileData);
       //ShowFilename(FILENAME_XML, edtFileDataXML);
     }
-
+     
     private void btnDeserialize_Click(object sender, RoutedEventArgs e)
     {
       Guy guy;
