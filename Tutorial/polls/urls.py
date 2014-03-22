@@ -1,14 +1,12 @@
 from django.conf.urls import patterns, include, url
-
-from django.contrib import admin
-admin.autodiscover()
+from polls import views
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'Tutorial.views.home', name='home'),
-    url(r'^polls/', include('polls.urls'), namespace='polls'),
-
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', views.index, name='index_url_alias'),
+    url(r'^(?P<poll_id>\d+)/$', views.detail, name='detail_url_alias'),
+    url(r'^(?P<poll_id>\d+)/results/$', views.detail, name='results_url_alias'),
+    url(r'^(?P<poll_id>\d+)/vote/$', views.detail, name='vote_url_alias'),
 )
 
 '''

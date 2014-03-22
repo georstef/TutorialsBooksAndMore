@@ -2,8 +2,8 @@ from django.contrib import admin
 from polls.models import Poll, Choice
 
 
-# class ChoiceInline(admin.StackedInline):
-class ChoiceInline(admin.TabularInline):
+# class ChoiceInline(admin.StackedInline): # fields one under the other
+class ChoiceInline(admin.TabularInline):   # fields side by side
     model = Choice
     extra = 3
 

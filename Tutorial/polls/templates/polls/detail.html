@@ -1,0 +1,13 @@
+<h1>{{ poll.question }}</h1>
+<ul>
+{% for choice in poll.choice_set.all %}
+    <li>{{ choice.choice_text }}</li>
+{% endfor %}
+</ul>
+<br>
+<p>
+The template system uses dot-lookup syntax to access variable attributes.
+In the example of [poll.question], 
+first Django does a dictionary lookup on the object poll.
+Failing that, it tries an attribute lookup - which works, in this case.
+</p>
