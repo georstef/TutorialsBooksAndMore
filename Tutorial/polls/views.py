@@ -1,8 +1,14 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext, loader
-from polls.models import Poll
+from django.core.urlresolvers import reverse
+from django.views import generic
+from polls.models import Poll, Choice
 
+
+'''
+NORMAL VIEWS
+'''
 def index(request):
     latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
     
@@ -12,6 +18,7 @@ def index(request):
 
     # one-liner for the 3 lines above 
     return render(request, 'polls/index.html', {'latest_poll_list': latest_poll_list})
+
 
 def detail(request, poll_id):
 ##    try:
@@ -23,11 +30,51 @@ def detail(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     return render(request, 'polls/detail.html', {'poll': poll})
 
+
 def results(request, poll_id):
-    return HttpResponse('results of poll id %s.' % poll_id)
+    poll = get_object_or_404(Poll, pk=poll_id)
+    return render(request, 'polls/results.html', {'poll':poll})
+
 
 def vote(request, poll_id):
-    return HttpResponse('voting for poll id %s.' % poll_id)
+    p = get_object_or_404(Poll, pk=poll_id)
+    try:
+        # request.POST is a dict the values of which are always string
+        selected_choice = p.choice_set.get(pk=request.POST['choice_name'])
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'polls/detail.html',
+                      {'poll': p,
+                       'error_message': "No selection was made"})
+    selected_choice.votes += 1
+    selected_choice.save()
+    # always return an HttpResponseRedirect after succesfully dealing with POST
+    # this porevents data from being posted twice if a user hits the back button
+    return HttpResponseRedirect(reverse('polls:results_url_alias', args=(p.id,)))
+
+'''
+SAME FUNCTIONALITY BUT WITH GENERIC VIEWS
+'''
+class IndexView(generic.ListView): # display a list of objects
+    template_name = 'polls/index.html' # must be named "template_name"
+    context_object_name = 'latest_poll_list' # the list is sent under this name
+
+    def get_queryset(self): # the list is taken from "get_queryset"
+        """ return the last five published polls """
+        return Poll.objects.order_by('-pub_date')[:5]      
+
+class DetailView(generic.DetailView): # display a a detail page for a particular object
+    model = Poll
+    # if "template_name" is left empty it defaults at
+    # <app name>/<model name>_detail.html
+    # eg-> polls/poll_detail.html
+    template_name = 'polls/detail.html' 
+
+class ResultsView(generic.DetailView):
+    model = Poll
+    # if "template_name" is left empty it defaults at
+    # <app name>/<model name>_detail.html
+    # eg-> polls/poll_detail.html
+    template_name = 'polls/results.html'
 
 '''
 There’s also a get_list_or_404() function, which works

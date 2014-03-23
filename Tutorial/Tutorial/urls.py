@@ -6,7 +6,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'Tutorial.views.home', name='home'),
-    url(r'^polls/', include('polls.urls'), namespace='polls'),
+
+    # namespace is an argument of the "include" function
+    url(r'^polls/', include('polls.urls', namespace='polls')), 
 
     url(r'^admin/', include(admin.site.urls)),
 )
