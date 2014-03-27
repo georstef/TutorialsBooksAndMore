@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from django.views import generic
+from django.contrib.auth.decorators import login_required
+import json
 from polls.models import Poll, Choice
 
 
@@ -16,8 +18,14 @@ def index(request):
     #context = RequestContext(request, {'latest_poll_list': latest_poll_list}) # create context
     #return HttpResponse(template.render(context))
 
-    # one-liner for the 3 lines above 
+    # one-liner for the 3 lines above
     return render(request, 'polls/index.html', {'latest_poll_list': latest_poll_list})
+
+    # just ana example of a json response
+    #if request.META['HTTP_ACCEPT'] == "application/json":
+    #    return HttpResponse(json.dumps({'key1':'value1', 'key2':'value2'}), content_type="application/json")
+    #else:
+    #    return HttpResponse(json.dumps({'key1':'value1', 'key2':'value2'}), content_type="application/json")
 
 
 def detail(request, poll_id):
@@ -36,6 +44,7 @@ def results(request, poll_id):
     return render(request, 'polls/results.html', {'poll':poll})
 
 
+@login_required#(login_url='/accounts/login/')
 def vote(request, poll_id):
     p = get_object_or_404(Poll, pk=poll_id)
     try:
