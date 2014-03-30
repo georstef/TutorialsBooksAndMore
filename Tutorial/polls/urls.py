@@ -4,14 +4,21 @@ from polls import views
 
 urlpatterns = patterns('',
     #
+    # ************
     # NORMAL VIEWS
+    # ************
     #
     url(r'^$', views.index, name='index_url_alias'),
     # url(r'^(?P<poll_id>\d+)/$', views.detail, name='detail_url_alias'),
     # url(r'^(?P<poll_id>\d+)/results/$', views.results, name='results_url_alias'),
     # url(r'^(?P<poll_id>\d+)/vote/$', views.vote, name='vote_url_alias'),
     #
+    #
+    #
+    # *****************************************
     # SAME FUNCTIONALITY BUT WITH GENERIC VIEWS
+    # *****************************************
+    #
     #url(r'^$', views.IndexView.as_view(), name='index_url_alias'),
     # generic views require a "pk" argument
     url(r'^(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail_url_alias'),

@@ -4,6 +4,7 @@ from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 import json
 from polls.models import Poll, Choice
 
@@ -12,7 +13,8 @@ from polls.models import Poll, Choice
 NORMAL VIEWS
 '''
 def index(request):
-    latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
+    # first 5 polls with dates not in the future
+    latest_poll_list = Poll.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
     
     #template = loader.get_template('polls/index.html') # load the template
     #context = RequestContext(request, {'latest_poll_list': latest_poll_list}) # create context
@@ -68,15 +70,19 @@ class IndexView(generic.ListView): # display a list of objects
     context_object_name = 'latest_poll_list' # the list is sent under this name
 
     def get_queryset(self): # the list is taken from "get_queryset"
-        """ return the last five published polls """
-        return Poll.objects.order_by('-pub_date')[:5]      
+        """ return the last five published polls not including polls with future dates """
+        return Poll.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]      
 
 class DetailView(generic.DetailView): # display a a detail page for a particular object
     model = Poll
     # if "template_name" is left empty it defaults at
     # <app name>/<model name>_detail.html
     # eg-> polls/poll_detail.html
-    template_name = 'polls/detail.html' 
+    template_name = 'polls/detail.html'
+
+    def get_queryset(self):
+        # don't return polls with future dates
+        return Poll.objects.filter(pub_date__lte=timezone.now())
 
 class ResultsView(generic.DetailView):
     model = Poll

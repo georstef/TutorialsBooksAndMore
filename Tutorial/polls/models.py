@@ -9,7 +9,8 @@ class Poll(models.Model):
     # date published -> positional argument human-readable name (description)
 
     def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        # must be smaller than NOW and bigger than NOW-1
+        return timezone.now() > self.pub_date >= timezone.now() - datetime.timedelta(days=1)
     
     # extra stuff for the admin site
     was_published_recently.admin_order_field = 'pub_date' # allows sorting based on another field
