@@ -1,3 +1,4 @@
+call C:\Python34\envdjango16\scripts\activate.bat
 manage.py sql polls
 manage.py sqlcustom polls 
 manage.py sqlindexes polls
