@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+    <header>
+        <title>Aggregate</title>
+    </header>
+    <body>
+        {% for team in teams %}
+            <h4>{{ team.name }}  GF: {{ team.aggregate_total_goals_for }}  GA: {{ team.aggregate_total_goals_against }}</h4>
+        {% endfor %}
+    </body>
+</html>

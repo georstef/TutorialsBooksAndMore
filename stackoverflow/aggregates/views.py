@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from aggregates.models import Team
 
 
 def index(request):
@@ -6,12 +7,15 @@ def index(request):
 
 
 def aggregate(request):
-    return render(request, 'goals.html', {'team': 'test', 'goals_for': 10, 'goals_against': 8})
+    teams = Team.objects.order_by('id')
+    return render(request, 'goals_aggregate.html', {'teams': teams})
 
 
 def annotate(request):
-    return render(request, 'goals.html', {'team': 'test', 'goals_for': 10, 'goals_against': 8})
+    teams = Team.objects.order_by('id')
+    return render(request, 'goals_annotate.html', {'teams': teams})
 
 
 def sql(request):
-    return render(request, 'goals.html', {'team': 'test', 'goals_for': 10, 'goals_against': 8})
+    teams = Team.objects.order_by('id')
+    return render(request, 'goals_sql.html', {'teams': teams})

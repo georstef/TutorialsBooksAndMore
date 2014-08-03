@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 
 # Create your models here.
@@ -31,9 +32,49 @@ class Team(models.Model):
     matches_lost = models.IntegerField(default=0)
     matches_tied = models.IntegerField(default=0)
     goals_in_favor = models.IntegerField(default=0)
-    goals_against = models.IntegerField(default=0)
+    goals_agaiinst = models.IntegerField(default=0)
     points = models.IntegerField(default=0)
     url_flag = models.CharField(max_length=500)
 
     def __str__(self):
         return self.name
+
+    def aggregate_total_goals_for(self):
+        # aggregate returns a dictionary
+        as_teama = Match.objects.filter(team_a_id=self.id).aggregate(Sum('goals_team_a'))
+        goals_as_teama = as_teama['goals_team_a__sum'] if as_teama['goals_team_a__sum'] else 0
+
+        as_teamb = Match.objects.filter(team_b_id=self.id).aggregate(Sum('goals_team_b'))
+        goals_as_teamb = as_teamb['goals_team_b__sum'] if as_teamb['goals_team_b__sum'] else 0
+
+        return goals_as_teama + goals_as_teamb
+
+    def aggregate_total_goals_against(self):
+        # aggregate returns a dictionary
+        of_teama = Match.objects.filter(team_b_id=self.id).aggregate(Sum('goals_team_a'))
+        goals_of_teama = of_teama['goals_team_a__sum'] if of_teama['goals_team_a__sum'] else 0
+
+        of_teamb = Match.objects.filter(team_a_id=self.id).aggregate(Sum('goals_team_b'))
+        goals_of_teamb = of_teamb['goals_team_b__sum'] if of_teamb['goals_team_b__sum'] else 0
+
+        return goals_of_teama + goals_of_teamb
+
+    def annotate_total_goals_for(self):
+        # annotate returns a queryset
+        as_teama = Match.objects.filter(team_a_id=self.id).annotate(goals_teama=Sum('goals_team_a'))
+        goals_as_teama = sum(match.goals_teama for match in as_teama)
+
+        as_teamb = Match.objects.filter(team_b_id=self.id).annotate(goals_teamb=Sum('goals_team_b'))
+        goals_as_teamb = sum(match.goals_teamb for match in as_teamb)
+
+        return goals_as_teama + goals_as_teamb
+
+    def annotate_total_goals_against(self):
+        # annotate returns a queryset
+        of_teama = Match.objects.filter(team_b_id=self.id).annotate(goals_teama=Sum('goals_team_a'))
+        goals_of_teama = sum(match.goals_teama for match in of_teama)
+
+        of_teamb = Match.objects.filter(team_a_id=self.id).annotate(goals_teamb=Sum('goals_team_b'))
+        goals_of_teamb = sum(match.goals_teamb for match in of_teamb)
+
+        return goals_of_teama + goals_of_teamb
