@@ -1,4 +1,5 @@
-from django.db.models import Avg
+from django.db.models import Sum
+from aggregates.models import Match, Team
 
 For:
 Match.objects.filter(team_a_id=1).aggregate(Sum('goals_team_a'))

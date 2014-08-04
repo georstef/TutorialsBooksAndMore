@@ -61,20 +61,24 @@ class Team(models.Model):
 
     def annotate_total_goals_for(self):
         # annotate returns a queryset
-        as_teama = Match.objects.filter(team_a_id=self.id).annotate(goals_teama=Sum('goals_team_a'))
-        goals_as_teama = sum(match.goals_teama for match in as_teama)
+        as_teama = Team.objects.filter(id=self.id).annotate(goals_teama=Sum('team_a__goals_team_a'))
+        goals_as_teama = as_teama[0].goals_teama if as_teama else 0
 
-        as_teamb = Match.objects.filter(team_b_id=self.id).annotate(goals_teamb=Sum('goals_team_b'))
-        goals_as_teamb = sum(match.goals_teamb for match in as_teamb)
+        as_teamb = Team.objects.filter(id=self.id).annotate(goals_teamb=Sum('team_b__goals_team_b'))
+        goals_as_teamb = as_teamb[0].goals_teamb if as_teamb else 0
 
-        return goals_as_teama + goals_as_teamb
+        return int(goals_as_teama or 0) + int(goals_as_teamb or 0)
 
     def annotate_total_goals_against(self):
         # annotate returns a queryset
-        of_teama = Match.objects.filter(team_b_id=self.id).annotate(goals_teama=Sum('goals_team_a'))
-        goals_of_teama = sum(match.goals_teama for match in of_teama)
+        # of_team = Team.objects.filter(id=self.id).annotate(goals_teama=Sum('team_b__goals_team_a'), goals_teamb=Sum('team_a__goals_team_b'))
+        # goals_of_teama = of_team[0].goals_teama if of_team else 0
+        # goals_of_teamb = of_team[0].goals_teamb if of_team else 0
 
-        of_teamb = Match.objects.filter(team_a_id=self.id).annotate(goals_teamb=Sum('goals_team_b'))
-        goals_of_teamb = sum(match.goals_teamb for match in of_teamb)
+        of_teama = Team.objects.filter(id=self.id).annotate(goals_teama=Sum('team_b__goals_team_a'))
+        goals_of_teama = of_teama[0].goals_teama if of_teama else 0
 
-        return goals_of_teama + goals_of_teamb
+        of_teamb = Team.objects.filter(id=self.id).annotate(goals_teamb=Sum('team_a__goals_team_b'))
+        goals_of_teamb = of_teamb[0].goals_teamb if of_teamb else 0
+
+        return int(goals_of_teama or 0) + int(goals_of_teamb or 0)
