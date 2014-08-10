@@ -19,3 +19,8 @@ def annotate(request):
 def sql(request):
     teams = Team.objects.order_by('id')
     return render(request, 'goals_sql.html', {'teams': teams})
+
+
+def extra(request):
+    teams = Team.objects.order_by('id')
+    return render(request, 'goals_extra.html', {'teams': teams})

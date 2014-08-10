@@ -82,3 +82,39 @@ class Team(models.Model):
         goals_of_teamb = of_teamb[0].goals_teamb if of_teamb else 0
 
         return int(goals_of_teama or 0) + int(goals_of_teamb or 0)
+
+    def sql_total_goals(self):
+        # sql returns a cursor (fetchall()=list of tuples, fetchone()=tuple)
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute('''
+          select
+            Ifnull((select sum(goals_team_a) from aggregates_match where team_a_id = aggregates_team.id), 0) +
+            Ifnull((select sum(goals_team_b) from aggregates_match where team_b_id = aggregates_team.id), 0) goals_for,
+            Ifnull((select sum(goals_team_b) from aggregates_match where team_a_id = aggregates_team.id), 0) +
+            Ifnull((select sum(goals_team_a) from aggregates_match where team_b_id = aggregates_team.id), 0) goals_against
+          from aggregates_team
+          where id = %s
+          ''', [self.id])
+        row = cursor.fetchone()
+        return {'goals_for': row[0], 'goals_against': row[1]}
+
+    def extra_total_goals_for(self):
+        # extra returns a queryset
+        as_teama = Match.objects.filter(team_a_id=self.id).extra(select={'goals_teama': 'sum(goals_team_a)'})
+        goals_as_teama = as_teama[0].goals_teama if as_teama else 0
+
+        as_teamb = Match.objects.filter(team_b_id=self.id).extra(select={'goals_teamb': 'sum(goals_team_b)'})
+        goals_as_teamb = as_teamb[0].goals_teamb if as_teamb else 0
+
+        return int(goals_as_teama or 0) + int(goals_as_teamb or 0)
+
+    def extra_total_goals_against(self):
+        # extra returns a queryset
+        of_teama = Match.objects.filter(team_b_id=self.id).extra(select={'goals_teama': 'sum(goals_team_a)'})
+        goals_of_teama = of_teama[0].goals_teama if of_teama else 0
+
+        of_teamb = Match.objects.filter(team_a_id=self.id).extra(select={'goals_teamb': 'sum(goals_team_b)'})
+        goals_of_teamb = of_teamb[0].goals_teamb if of_teamb else 0
+
+        return int(goals_of_teama or 0) + int(goals_of_teamb or 0)
