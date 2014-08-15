@@ -1,11 +1,29 @@
 <!doctype html>
+{% load bootstrap3 %}
 <html>
     <header>
         <title>Extra</title>
     </header>
     <body>
-        {% for team in teams %}
-            <h4>{{ team.name }}  GF: {{ team.extra_total_goals_for }}  GA: {{ team.extra_total_goals_against }}</h4>
-        {% endfor %}
+        <table class="table table-hover">
+            <thead>
+              <tr>
+                <th class="col-md-2 text-left">Team</th>
+                <th class="col-md-4 text-center">Goals For</th>
+                <th class="col-md-4 text-center">Goals Against</th>
+              </tr>
+            </thead>
+            {% for team in teams %}
+                <tr>
+                    <td class="col-md-2 text-left">{{ team.name }}</td>
+                    <td class="col-md-4 text-center">{{ team.extra_total_goals_for }}</td>
+                    <td class="col-md-4 text-center">{{ team.extra_total_goals_against }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+
     </body>
 </html>
