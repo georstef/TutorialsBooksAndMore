@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
 def album_list(request):
-    pass
+    return render(request, 'album_list.html')
