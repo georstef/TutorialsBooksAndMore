@@ -4,6 +4,13 @@
 Portfolio Site
 {% endblock title %}
 
+{% block styling %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="static/jumbotron.css" rel="stylesheet">
+{% endblock styling %}
+
+
 {% block jumbotron %}
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
