@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load staticfiles %}
 
 {% block title %}
 Portfolio Site - Albums
@@ -8,7 +8,7 @@ Portfolio Site - Albums
 {% block styling %}
     {{ block.super }}
     <!-- Custom styles for this template -->
-    <link href="{% static 'modern-business.css' %}" rel="stylesheet">
+    <link href="{% static 'work/modern-business.css' %}" rel="stylesheet">
 {% endblock styling %}
 
 
@@ -20,7 +20,7 @@ Portfolio Site - Albums
                 <small>Subheading</small>
             </h1>
             <ol class="breadcrumb">
-                <li><a href="index.html">Home</a>
+                <li><a href="..\">Home</a>
                 </li>
                 <li class="active">One Column Portfolio</li>
             </ol>
@@ -40,7 +40,7 @@ Portfolio Site - Albums
                 <h3>{{ album.title }}</h3>
                 <h5>{{ album.published_date }}</h5>
                 <p>{{ album.description }}</p>
-                <a class="btn btn-primary" href="portfolio-item.html">View Project</i></a>
+                <a class="btn btn-primary" href="portfolio-item.html">View Project</a>
             </div>
         </div>
         <!-- /.row -->
