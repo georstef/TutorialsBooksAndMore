@@ -8,7 +8,7 @@ Portfolio Site - Albums
 {% block styling %}
     {{ block.super }}
     <!-- Custom styles for this template -->
-    <link href="{% static 'work/modern-business.css' %}" rel="stylesheet">
+    <link href="{% static 'work/css/modern-business.css' %}" rel="stylesheet">
 {% endblock styling %}
 
 
@@ -32,7 +32,7 @@ Portfolio Site - Albums
 
         <div class="row">
             <div class="col-md-7">
-                <a href="portfolio-item.html">
+                <a href="{% url 'albumdetail' id=album.id %}">
                     <img class="img-responsive img-hover" src="http://placehold.it/700x300" alt="{{ album.title }}">
                 </a>
             </div>
@@ -40,7 +40,7 @@ Portfolio Site - Albums
                 <h3>{{ album.title }}</h3>
                 <h5>{{ album.published_date }}</h5>
                 <p>{{ album.description }}</p>
-                <a class="btn btn-primary" href="portfolio-item.html">View Project</a>
+                <a class="btn btn-primary" href="{% url 'albumdetail' id=album.id %}">View Project</a>
             </div>
         </div>
         <!-- /.row -->
@@ -93,7 +93,8 @@ Portfolio Site - Albums
 
 {% block javascript %}
     {{ block.super }}
-    <!-- jQuery Version 1.11.0 -->
-    <script src="{% static 'jquery-1.11.0.js' %}"></script>
+    <!-- jQuery Version 1.11.0 (i think it's not needed)
+    <s cript src="{% static 'jquery-1.11.0.js' %}"></s cript>
+    -->
 {% endblock javascript %}
 
