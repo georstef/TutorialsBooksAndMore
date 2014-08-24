@@ -11,13 +11,14 @@ Portfolio Site - Albums
     <link href="{% static 'work/css/jquery.fancybox.css' %}" rel="stylesheet" media="screen">
 {% endblock styling %}
 
+{% block classwork %}class="active"{% endblock classwork %}
 
 {% block content %}
     <div class="row">
         <div class='list-group gallery'>
             {% for photo in albums.photo.all %}
                 <div class='col-xs-6 col-sm-4 col-md-3 col-lg-3'>
-                    <a class="thumbnail fancybox" rel="photogroup" title="{{ photo.title }}" href="http://placehold.it/500x500.png">
+                    <a class="thumbnail fancybox" rel="photogroup" title="{{ photo.title }}" href="{{ photo.image }}">
                         <img class="img-rounded img-responsive" alt="{{ photo.title }}" src="http://placehold.it/320x320" />
                         <div class='text-center'>
                             <small class='text-muted'>{{ photo.title }}</small>
