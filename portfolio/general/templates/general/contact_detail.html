@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+Portfolio Site - Albums
+{% endblock title %}
+
+{% block styling %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'general/css/jquery.fancybox.css' %}" rel="stylesheet" media="screen">
+{% endblock styling %}
+
+{% block classcontact %}class="active"{% endblock classcontact %}
+
+{% block content %}
+    <div class="row">
+        <div class='list-group gallery'>
+            {% for photo in albums.photo.all %}
+                <div class='col-xs-6 col-sm-4 col-md-3 col-lg-3'>
+                    <a class="thumbnail fancybox" rel="photogroup" title="{{ photo.title }}" href="{{ photo.image }}">
+                        <img class="img-rounded img-responsive" alt="{{ photo.title }}" src="http://placehold.it/320x320" />
+                        <div class='text-center'>
+                            <small class='text-muted'>{{ photo.title }}</small>
+                        </div> <!-- text-right / end -->
+                    </a>
+                </div> <!-- col / end -->
+            {% endfor %}
+        </div> <!-- list-group / end -->
+	</div> <!-- row / end -->
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'general/js/jquery.fancybox.js' %}"></script>
+{% endblock javascript %}
+
