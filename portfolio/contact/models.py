@@ -14,4 +14,3 @@ class Contact(models.Model):
     # text to show on admin page
     def __str__(self):
         return '{0}, {1}'.format(self.address, self.city)
-
