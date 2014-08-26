@@ -35,16 +35,43 @@ Portfolio Site - Albums
             <!-- Contact Details Column -->
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                 <h3>Στοιχεία Επικοινωνίας</h3>
-                <p>
-                    Αριστοτέλους 1<br>54321, Θεσσαλονίκη<br>
-                </p>
-                <p><i class="fa fa-phone"></i>
-                    <abbr title="Τηλέφωνο">Τ</abbr>: (2310) 456-789</p>
-                <p><i class="fa fa-envelope-o"></i>
-                    <abbr title="Email">E</abbr>: <a href="mailto:name@example.com">name@example.com</a>
-                </p>
-                <p><i class="fa fa-clock-o"></i>
-                    <abbr title="Ωράριο">Ω</abbr>: Δευτέρα - Παρασκευή: 9:00 - 18:00</p>
+                {% for contact in contacts %}
+                    {% if contact.title or contact.address or contact.city or contact.po_box%}
+                        <p>
+                        {% if contact.title %}
+                          {{ contact.title }}<br>
+                        {% endif %}
+
+                        {% if contact.address %}
+                          {{ contact.address }}<br>
+                        {% endif %}
+                        {% if contact.city or contact.po_box %}
+                            {{ contact.city }}{% if contact.po_box %}, {{ contact.po_box }} {% endif %}<br>
+                        {% endif %}
+                        </p>
+                    {% endif %}
+                    {% if contact.telephone %}
+                        <p><i class="fa fa-phone"></i>
+                            <abbr title="Τηλέφωνο">Τ</abbr>: {{ contact.telephone }}
+                        </p>
+                    {% endif %}
+                    {% if contact.mobile %}
+                        <p><i class="fa fa-mobile"></i>
+                            <abbr title="Κινητό">Κ</abbr>: {{ contact.mobile }}
+                        </p>
+                    {% endif %}
+                    {% if contact.fax %}
+                        <p><i class="fa fa-fax"></i>
+                            <abbr title="Φαξ">Φ</abbr>: {{ contact.fax }}
+                        </p>
+                    {% endif %}
+                    {% if contact.email %}
+                        <p><i class="fa fa-envelope-o"></i>
+                            <abbr title="Email">E</abbr>: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                        </p>
+                    {% endif %}
+
+                {% endfor %}
             </div>
 
             <div class="col-xs-12 col-sm-6 col-md-8 col-lg-8">
