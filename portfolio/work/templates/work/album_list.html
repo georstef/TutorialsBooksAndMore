@@ -35,8 +35,8 @@ Portfolio Site - Albums
             <div class="col-md-5">
                 <h3>{{ album.title }}</h3>
                 <h5>{{ album.published_date }}</h5>
-                <p>{{ album.description }}</p>
-                <a class="btn btn-primary" href="{% url 'albumdetail' id=album.id %}">View Project</a>
+                <p>{{ album.description|linebreaksbr }}</p>
+                <a class="btn btn-primary" href="{% url 'albumdetail' id=album.id %}">Περισσότερα &raquo</a>
             </div>
         </div>
         <!-- /.row -->
@@ -86,11 +86,4 @@ Portfolio Site - Albums
     </footer>
 
 {% endblock content %}
-
-{% block javascript %}
-    {{ block.super }}
-    <!-- jQuery Version 1.11.0 (i think it's not needed)
-    <s cript src="{% static 'jquery-1.11.0.js' %}"></s cript>
-    -->
-{% endblock javascript %}
 

@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -37,14 +39,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="..">Santiago Calatrava</a>
+          <a class="navbar-brand" href="{% url 'index' %}">Santiago Calatrava</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li {% block classhome %}{% endblock classhome %}><a href="..">Αρχική</a></li>
+            <li {% block classhome %}{% endblock classhome %}><a href="{% url 'index' %}">Αρχική</a></li>
             <li {% block classbio %}{% endblock classbio %}><a href="/general/bio">Βιογραφικό</a></li>
             <li {% block classwork %}{% endblock classwork %}><a href="/work">Έργα</a></li>
-            <li {% block classcontact %}{% endblock classcontact %}><a href="/general/contact">Επικοινωνία</a></li>
+            <li {% block classcontact %}{% endblock classcontact %}><a href="/contact">Επικοινωνία</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
