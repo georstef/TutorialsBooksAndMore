@@ -22,14 +22,15 @@ class Album(models.Model):
 def get_image_path(instance, filename):
     # if not instance.id:
     #    instance.save()     <- this causes recursion
-    return 'media_folder/%s/%s' % (instance.album_id, filename)
+    # return 'media_folder/%s/%s' % (instance.album_id, filename)
+    return '%s/%s' % (instance.album_id, filename)
 
 
 class Photo(models.Model):
     album = models.ForeignKey(Album, related_name='photo')
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    image = models.FileField(upload_to=get_image_path, blank=True, null=True)
+    image = models.ImageField(upload_to=get_image_path, blank=True, null=True)
     # image = models.FileField(
     #     upload_to=lambda instance, filename: '%s/%s-%s.jpg' % (instance.album_id, instance.id, filename))
     created_date = models.DateTimeField(default=timezone.now())

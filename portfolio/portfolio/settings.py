@@ -87,3 +87,6 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"),)
 
 STATIC_ROOT = 'c:/temp/static'  # just for testing collectstatic
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media_folder")
+MEDIA_URL = '/media_folder/'
