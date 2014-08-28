@@ -76,7 +76,8 @@ Portfolio Site - Albums
 
             <div class="col-xs-12 col-sm-6 col-md-8 col-lg-8">
                 <h3>Επικοινωνήστε μαζί μου</h3>
-                <form name="sentMessage" id="contactForm" novalidate>
+                <form action="." name="sentMessage" id="contactForm" method="POST">
+                    {% csrf_token %}
                     <div class="control-group form-group">
                         <div class="controls">
                             <label>Ονοματεπώνυμο:</label>
