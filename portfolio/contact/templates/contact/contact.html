@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-Portfolio Site - Albums
+    Portfolio Site - Albums
 {% endblock title %}
 
 {% block styling %}
@@ -15,12 +15,8 @@ Portfolio Site - Albums
 
 {% block content %}
 <!-- Page Heading/Breadcrumbs -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Επικοινωνία
-                    <small></small>
-                </h1>
-            </div>
+        <div class="page-header">
+            <h1>Επικοινωνία</h1>
         </div>
         <!-- /.row -->
 
@@ -80,26 +76,29 @@ Portfolio Site - Albums
                     {% csrf_token %}
                     <div class="control-group form-group">
                         <div class="controls">
-                            <label>Ονοματεπώνυμο:</label>
-                            <input type="text" class="form-control" name="name" id="name" required data-validation-required-message="Please enter your name.">
+                            <label class="control-label" for="name">Ονοματεπώνυμο</label>
+                            <input type="text" class="form-control" name="name" id="name" required data-validation-required-message="Please enter your name."  autofocus>
                             <p class="help-block"></p>
                         </div>
                     </div>
                     <div class="control-group form-group">
                         <div class="controls">
-                            <label>Email:</label>
+                            <label class="control-label" for="email">Email</label>
                             <input type="email" class="form-control" name="email" id="email" required data-validation-required-message="Please enter your email address.">
                         </div>
                     </div>
                     <div class="control-group form-group">
                         <div class="controls">
-                            <label>Μήνυμα:</label>
+                            <label class="control-label" for="message">Μήνυμα</label>
                             <textarea rows="10" cols="100" class="form-control" name="message" id="message" required data-validation-required-message="Please enter your message" maxlength="999" style="resize:none"></textarea>
                         </div>
                     </div>
                     <div id="success"></div>
                     <!-- For success/fail messages -->
-                    <button type="submit" class="btn btn-primary">Αποστολή</button>
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">Αποστολή</button>
+                    </div>
+                    
                 </form>
             </div>
 
