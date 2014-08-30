@@ -1,3 +1,4 @@
+from smtplib import SMTPException
 from django.shortcuts import render
 from django.core.mail import send_mail, BadHeaderError
 from contact.models import Contact
@@ -10,16 +11,15 @@ def contact_detail(request):
         message = request.POST.get('message', '')
 
         if name and email and message:
-            return render(request, 'contact/yes.html')
             try:
                 send_mail(name, message, email, ['georstef@gmail.com'])
             except BadHeaderError:
                 return render(request, 'contact/no.html')
-                # return HttpResponse('Invalid header found.')
+            except SMTPException:
+                return render(request, 'contact/no.html')
 
             return render(request, 'contact/yes.html')
-            # return HttpResponseRedirect('/contact/thankyou/')
-            pass  # alert
+
     # request.GET
     contacts = Contact.objects.all()
     return render(request, 'contact/contact.html', {'contacts': contacts})
