@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.contrib import messages
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -38,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'debug_toolbar',
     'work',
-    'general',
+    'bio',
     'contact',
 )
 
@@ -50,6 +51,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
 
 ROOT_URLCONF = 'portfolio.urls'
 
@@ -91,10 +96,10 @@ STATIC_ROOT = 'c:/temp/static'  # just for testing collectstatic
 MEDIA_ROOT = os.path.join(BASE_DIR, "media_folder")
 MEDIA_URL = '/media_folder/'
 
-DEFAULT_FROM_EMAIL = 'nwohmb@gmail.com'
-SERVER_EMAIL = 'nwohmb@gmail.com'
-EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'nwohmb@gmail.com'
+# SERVER_EMAIL = 'nwohmb@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 0
+EMAIL_PORT = 587  # or 587
 EMAIL_HOST_USER = 'nwohmb@gmail.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = '****'
+EMAIL_USE_TLS = True

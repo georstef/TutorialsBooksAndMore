@@ -8,7 +8,7 @@
 {% block styling %}
     {{ block.super }}
     <!-- Custom styles for this template -->
-    <link href="{% static 'general/css/modern-business.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'contact/css/modern-business.css' %}" rel="stylesheet" media="screen">
 {% endblock styling %}
 
 {% block classcontact %}class="active"{% endblock classcontact %}
@@ -29,7 +29,7 @@
             </div>
             -->
             <!-- Contact Details Column -->
-            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+            <div class="col-sm-6 col-md-4">
                 <h3>Στοιχεία Επικοινωνίας</h3>
                 {% for contact in contacts %}
                     {% if contact.title or contact.address or contact.city or contact.po_box%}
@@ -70,7 +70,17 @@
                 {% endfor %}
             </div>
 
-            <div class="col-xs-12 col-sm-6 col-md-8 col-lg-8">
+            <div class="col-sm-6 col-md-8">
+                {% if messages %}
+                    <div id="notifications">
+                        {% for message in messages %}
+                            <div class="alert alert-dismissable alert-{{ message.tags }}">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                              {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <h3>Επικοινωνήστε μαζί μου</h3>
                 <form action="{% url 'contactdetail' %}" name="sentMessage" id="contactForm" method="POST">
                     {% csrf_token %}
@@ -104,16 +114,5 @@
 
         </div>
         <!-- /.row -->
-
-        <hr>
-
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2014</p>
-                </div>
-            </div>
-        </footer>
 {% endblock content %}
 
