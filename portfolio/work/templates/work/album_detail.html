@@ -16,12 +16,8 @@ Portfolio Site - Albums
 
 {% block content %}
     <!-- Page Heading/Breadcrumbs -->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Έργο
-                <small></small>
-            </h1>
-        </div>
+    <div class="page-header">
+        <h1>Έργο</h1>
     </div>
     <!-- /.row -->
 
@@ -31,7 +27,7 @@ Portfolio Site - Albums
             <!--
             <img class="img-responsive" src="http://placehold.it/750x450" alt="">
             -->
-            <img class="img-responsive" src="http://tmacfitness.com/wp-content/uploads/2013/04/Beauty-of-nature-random-4884759-1280-800.jpg" alt="">
+            <img class="img-responsive" src="http://www.wallpapersak.com/wp-content/uploads/2014/07/Home-And-Nature-Wallpapers-4.jpg" alt="">
         </div>
         <div class="col-md-6">
             <h2>{{ album.title }}</h2>
@@ -40,10 +36,8 @@ Portfolio Site - Albums
     </div>
     <!-- /.row -->
 
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Εικόνες</h1>
-        </div>
+    <div class="page-header">
+        <h1>Εικόνες</h1>
     </div>
 
     <div class="row">
@@ -62,10 +56,10 @@ Portfolio Site - Albums
             {% endfor %}
         </div> <!-- list-group / end -->
 	</div> <!-- row / end -->
+
 {% endblock content %}
 
 {% block javascript %}
     {{ block.super }}
     <script src="{% static 'work/js/jquery.fancybox.js' %}"></script>
 {% endblock javascript %}
-
