@@ -10,6 +10,7 @@ Portfolio Site - Albums
     <!-- Custom styles for this template -->
     <link href="{% static 'work/css/modern-business.css' %}" rel="stylesheet">
     <link href="{% static 'work/css/jquery.fancybox.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'work/css/custom-thumbnail.css' %}" rel="stylesheet" media="screen">
 {% endblock styling %}
 
 {% block classwork %}class="active"{% endblock classwork %}
@@ -23,7 +24,7 @@ Portfolio Site - Albums
 
     <!-- Intro Content -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-6">
             <!--
             <img class="img-responsive" src="http://placehold.it/750x450" alt="">
             -->
@@ -44,9 +45,10 @@ Portfolio Site - Albums
         <div class='list-group gallery'>
             {% for photo in album.photo.all %}
                 {% if photo.image %}
-                    <div class='col-xs-6 col-sm-4 col-md-3 col-lg-3'>
+                    <div class='col-xs-6 col-sm-4 col-md-3'>
                         <a class="thumbnail fancybox" rel="photogroup" title="{{ photo.title }}" href="{{ photo.image.url }}">
-                            <img class="img-rounded img-responsive" alt="{{ photo.title }}" src="{{ photo.image.url }}" />
+                            <img class="img-responsive" alt="{{ photo.title }}" src="{{ photo.image.url }}" />
+
                             <div class='text-center'>
                                 <small class='text-muted'>{{ photo.title }}</small>
                             </div> <!-- text-right / end -->
