@@ -23,13 +23,8 @@
         <!-- Content Row -->
         <div class="row">
 
-            <!-- Map Column
-            <div class="col-md-8">
-                <iframe width="100%" height="400px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?hl=en&amp;ie=UTF8&amp;ll=37.0625,-95.677068&amp;spn=56.506174,79.013672&amp;t=m&amp;z=4&amp;output=embed"></iframe>
-            </div>
-            -->
             <!-- Contact Details Column -->
-            <div class="col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-5">
                 <h3>Στοιχεία Επικοινωνίας</h3>
                 {% for contact in contacts %}
                     {% if contact.title or contact.address or contact.city or contact.po_box%}
@@ -67,10 +62,13 @@
                         </p>
                     {% endif %}
 
+                    <a href="https://www.google.com/maps/search/{{contact.address}},{{contact.city}}/" target="_blank">
+                        <img class="img-responsive img-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?center={{contact.address}},{{contact.city}}&zoom=15&size=400x223&markers=color:red|{{contact.address}},{{contact.city}}&sensor=false">
+                    </a>
                 {% endfor %}
             </div>
 
-            <div class="col-sm-6 col-md-8">
+            <div class="col-sm-6 col-md-7">
                 {% if messages %}
                     <div id="notifications">
                         {% for message in messages %}
