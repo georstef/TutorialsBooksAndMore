@@ -1,7 +1,7 @@
 from django.shortcuts import render
-# from general.models import Contact, Bio
+from bio.models import *
+
 
 def bio_detail(request):
-    # albums = Album.objects.filter(published_date__isnull=False).order_by('-published_date')
-    return render(request, 'bio/bio_detail.html', {})  # it searches inside work/templates/work
-    # return render(request, 'album_list.html')  # with 'work/' it searches inside work/templates
+    profiles = Profile.objects.all()
+    return render(request, 'bio/bio_detail.html', {'profiles': profiles})  # it searches inside bio/templates/bio
