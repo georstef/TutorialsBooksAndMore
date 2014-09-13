@@ -67,7 +67,7 @@ Portfolio Site - Albums
                             <p style="margin-top:20px;"><strong>Περίοδος: </strong>{{ experience.get_from_month_display }} {{ experience.from_year }} - {% if experience.to_month %}{{ experience.get_to_month_display }} {{ experience.to_year }}{% else %}Σήμερα{% endif %}</p>
                         </div>
                         <div class="col-sm-7">
-                            <p style="margin-top:10px;">{{ experience.description|linebreaksbr }}</p>
+                            <p style="margin-top:10px;">{{ experience.description|safe }}</p>
                         </div>
                     </div>
                     {% if not forloop.last %}<hr>{% endif %}
@@ -88,7 +88,7 @@ Portfolio Site - Albums
                             <p style="margin-top:40px;"><strong>Περίοδος: </strong>{{ education.from_year }} - {% if education.to_year %}{{ education.to_year }}{% else %}Σήμερα{% endif %}</p>
                         </div>
                         <div class="col-sm-7">
-                          <p style="margin-top:10px;">{{ education.comments|linebreaksbr }}</p>
+                          <p style="margin-top:10px;">{{ education.comments|safe }}</p>
                         </div>
                     </div>
                     {% if not forloop.last %}<hr>{% endif %}

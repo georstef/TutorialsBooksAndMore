@@ -9,6 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url(r'^summernote/', include('django_summernote.urls')),
 
     url(r'^work/', include('work.urls')),
     url(r'^bio/', include('bio.urls')),

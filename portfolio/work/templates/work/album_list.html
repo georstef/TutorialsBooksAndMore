@@ -31,7 +31,7 @@ Portfolio Site - Albums
             <div class="col-md-5">
                 <h3>{{ album.title }}</h3>
                 <h4>{{ album.published_date }}</h4>
-                <p>{{ album.description|linebreaksbr }}</p>
+                <p>{{ album.description|safe }}</p>
                 <a class="btn btn-primary" href="{% url 'albumdetail' id=album.id %}">Περισσότερα &raquo</a>
             </div>
         </div>
