@@ -4,7 +4,7 @@ from work.models import Album, Photo
 
 
 def album_list(request):
-    albums_list = Album.objects.filter(published_date__isnull=False, photo=True).order_by('-published_date')
+    albums_list = Album.objects.filter(published_date__isnull=False, photo__isnull=False).distinct().order_by('-published_date')
     paginator = Paginator(albums_list, 2)
 
     page = request.GET.get('page')
