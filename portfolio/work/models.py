@@ -14,6 +14,16 @@ class Album(models.Model):
         self.published_date = timezone.now()
         self.save()
 
+    def get_cover_photo(self):
+        cover_photo = self.photo.filter(use_as_cover=True)[0]
+        if cover_photo:
+            return cover_photo
+        else:
+            return self.photo.all[0]
+
+    def has_photo(self):
+        return self.photo.exists()
+
     # text to show on admin page
     def __str__(self):
         return self.title
@@ -33,6 +43,7 @@ class Photo(models.Model):
     image = models.ImageField(upload_to=get_image_path, blank=True, null=True)
     # image = models.FileField(
     #     upload_to=lambda instance, filename: '%s/%s-%s.jpg' % (instance.album_id, instance.id, filename))
+    use_as_cover = models.BooleanField(default=False, null=False)
     created_date = models.DateTimeField(default=timezone.now())
 
     # text to show on admin page

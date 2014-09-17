@@ -25,7 +25,7 @@ Portfolio Site - Albums
         <div class="row">
             <div class="col-md-7">
                 <a href="{% url 'albumdetail' id=album.id %}">
-                    <img class="img-responsive img-hover" src="http://placehold.it/700x300" alt="{{ album.title }}">
+                    <img class="img-responsive img-hover" src="{{ album.get_cover_photo.image.url }}" alt="{{ album.get_cover_photo.title }}">
                 </a>
             </div>
             <div class="col-md-5">

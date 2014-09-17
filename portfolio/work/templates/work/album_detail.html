@@ -10,7 +10,9 @@ Portfolio Site - Albums
     <!-- Custom styles for this template -->
     <link href="{% static 'work/css/modern-business.css' %}" rel="stylesheet">
     <link href="{% static 'work/css/jquery.fancybox.css' %}" rel="stylesheet" media="screen">
+    <!-- Custom thumbnails
     <link href="{% static 'work/css/custom-thumbnail.css' %}" rel="stylesheet" media="screen">
+     -->
 {% endblock styling %}
 
 {% block classwork %}class="active"{% endblock classwork %}
@@ -28,7 +30,7 @@ Portfolio Site - Albums
             <!--
             <img class="img-responsive" src="http://placehold.it/750x450" alt="">
             -->
-            <img class="img-responsive" src="http://www.wallpapersak.com/wp-content/uploads/2014/07/Home-And-Nature-Wallpapers-4.jpg" alt="">
+            <img class="img-responsive" src="{{ album.get_cover_photo.image.url }}" alt="{{ album.get_cover_photo.title }}">
         </div>
         <div class="col-md-6">
             <h2>{{ album.title }}</h2>
@@ -47,7 +49,7 @@ Portfolio Site - Albums
                 {% if photo.image %}
                     <div class='col-xs-6 col-sm-4 col-md-3'>
                         <a class="thumbnail fancybox" rel="photogroup" title="{{ photo.title }}" href="{{ photo.image.url }}">
-                            <img class="img-responsive" alt="{{ photo.title }}" src="{{ photo.image.url }}" />
+                            <img class="img-responsive img-hover" alt="{{ photo.title }}" src="{{ photo.image.url }}" />
 
                             <div class='text-center'>
                                 <small class='text-muted'>{{ photo.title }}</small>

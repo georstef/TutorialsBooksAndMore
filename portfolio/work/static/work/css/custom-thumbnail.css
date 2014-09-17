@@ -19,6 +19,7 @@
 .thumbnail {
     max-height: 240px;
     height: 240px;
+    width: auto;
     }
 .thumbnail img {
     height: 93%;
