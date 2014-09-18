@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 
@@ -23,6 +24,9 @@ class Album(models.Model):
 
     def has_photo(self):
         return self.photo.exists()
+        
+    def get_absolute_url(self):
+        return reverse('work.views.album_detail', args=[str(self.id)])
 
     # text to show on admin page
     def __str__(self):

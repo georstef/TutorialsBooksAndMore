@@ -24,7 +24,7 @@ Portfolio Site - Albums
 
         <div class="row">
             <div class="col-md-7">
-                <a href="{% url 'albumdetail' id=album.id %}">
+                <a href="{{ album.get_absolute_url }}">
                     <img class="img-responsive img-hover" src="{{ album.get_cover_photo.image.url }}" alt="{{ album.get_cover_photo.title }}">
                 </a>
             </div>
@@ -32,7 +32,7 @@ Portfolio Site - Albums
                 <h3>{{ album.title }}</h3>
                 <h4>{{ album.published_date }}</h4>
                 <p>{{ album.description|safe }}</p>
-                <a class="btn btn-primary" href="{% url 'albumdetail' id=album.id %}">Περισσότερα &raquo</a>
+                <a class="btn btn-primary" href="{{ album.get_absolute_url }}">Περισσότερα &raquo</a>
             </div>
         </div>
         <!-- /.row -->
