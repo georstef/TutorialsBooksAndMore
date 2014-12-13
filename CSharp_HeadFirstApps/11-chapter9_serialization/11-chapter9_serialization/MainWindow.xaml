@@ -1,0 +1,13 @@
+﻿<Window x:Class="_11_chapter9_serialization.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Button Content="Serialize Deck" Height="23" HorizontalAlignment="Left" Margin="35,29,0,0" Name="btnSerializeDeck" VerticalAlignment="Top" Width="101" Click="btnSerializeDeck_Click" />
+        <ListBox Height="274" HorizontalAlignment="Left" Margin="173,12,0,0" Name="edtDeck1" VerticalAlignment="Top" Width="140" />
+        <Button Content="Deserialize Deck" Height="23" HorizontalAlignment="Left" Margin="35,58,0,0" Name="btnDeserializeDeck" VerticalAlignment="Top" Width="101" Click="btnDeserializeDeck_Click" />
+        <ListBox Height="274" HorizontalAlignment="Left" Margin="341,12,0,0" Name="edtDeck2" VerticalAlignment="Top" Width="140" />
+        <Button Content="Serialize Many Decks" Height="23" HorizontalAlignment="Left" Margin="25,128,0,0" Name="btnSerializeManyDecks" VerticalAlignment="Top" Width="127" Click="btnSerializeManyDecks_Click" />
+        <Button Content="Deserialize Many Decks" Height="23" HorizontalAlignment="Left" Margin="25,157,0,0" Name="btnDeserializeManyDecks" VerticalAlignment="Top" Width="127" Click="btnDeserializeManyDecks_Click" />
+    </Grid>
+</Window>
