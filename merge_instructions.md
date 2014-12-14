@@ -15,3 +15,6 @@ How to merge Repositories without losing history
 
 //4. open Github and delete repository "subProject" (settings)
 
+//5. in Github app delete "subProject"
+
+//6. open windows explorer and delete folder "subProject"
