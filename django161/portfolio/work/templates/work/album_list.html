@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+Portfolio Site - Albums
+{% endblock title %}
+
+{% block styling %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'work/css/modern-business.css' %}" rel="stylesheet">
+{% endblock styling %}
+
+{% block classwork %}class="active"{% endblock classwork %}
+
+{% block content %}
+    <!-- Page Heading/Breadcrumbs -->
+    <div class="page-header">
+        <h1>Έργα</h1>
+    </div>
+    <!-- /.row -->
+
+    {% for album in albums %}
+
+        <div class="row">
+            <div class="col-md-7">
+                <a href="{{ album.get_absolute_url }}">
+                    <img class="img-responsive img-hover" src="{{ album.get_cover_photo.image.url }}" alt="{{ album.get_cover_photo.title }}">
+                </a>
+            </div>
+            <div class="col-md-5">
+                <h3>{{ album.title }}</h3>
+                <h4>{{ album.published_date }}</h4>
+                <p>{{ album.description|safe }}</p>
+                <a class="btn btn-primary" href="{{ album.get_absolute_url }}">Περισσότερα &raquo</a>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+    {% endfor %}
+
+    <!-- Pagination -->
+    <div class="row text-center">
+        <div>
+            <ul class="pagination">
+                {% if albums.has_previous %}
+                    <li>
+                        <a href="?page={{ albums.previous_page_number }}">&laquo;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <span>&laquo;<span class="sr-only">(previous)</span></span>
+                    </li>
+                {% endif %}
+
+                {% for i in albums.paginator.page_range %}
+                    {% if albums.number == i %}
+                        <li class="active"><span>{{i}}<span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li><a href="?page={{i}}">{{i}}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if albums.has_next %}
+                    <li>
+                        <a href="?page={{ albums.next_page_number }}">&raquo;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <span>&raquo;<span class="sr-only">(next)</span></span>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <!-- /.row -->
+
+{% endblock content %}
+

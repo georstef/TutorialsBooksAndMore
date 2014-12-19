@@ -1,0 +1,20 @@
+from django.db.models import Sum
+from aggregates.models import Match, Team
+
+For:
+Match.objects.filter(team_a_id=1).aggregate(Sum('goals_team_a'))
+{'goals_team_a__sum': XX}
+Match.objects.filter(team_b_id=1).aggregate(Sum('goals_team_b'))
+{'goals_team_b__sum': None}
+['goals_team_b__sum'] if ['goals_team_b__sum'] else 0
+sum({}.values())
+
+Against:
+Match.objects.filter(team_a_id=1).aggregate(Sum('goals_team_b'))
+{'goals_team_b__sum': XX}
+Match.objects.filter(team_b_id=1).aggregate(Sum('goals_team_a'))
+{'goals_team_a__sum': XX}
+
+
+or
+Match.objects.filter(team_a_id=1).annotate(Sum('goals_team_b'))[0].goals_team_b__sum

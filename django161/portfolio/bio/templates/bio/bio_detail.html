@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+Portfolio Site - Albums
+{% endblock title %}
+
+{% block styling %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'bio/css/modern-business.css' %}" rel="stylesheet">
+{% endblock styling %}
+
+{% block classbio %}class="active"{% endblock classbio %}
+
+{% block content %}
+    <!-- Page Heading/Breadcrumbs -->
+    <div class="page-header">
+        <h1>Βιογραφικό</h1>
+    </div>
+    <!-- /.row -->
+
+    {% for profile in profiles %}
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Προσωπικά στοιχεία</h3>
+            </div>
+            <div class="col-sm-8">
+                <h3>{{ profile.full_name }}</h3>
+                <p>
+                    {% if profile.address %}
+                      {{ profile.address }}<br>
+                    {% endif %}
+                    {% if profile.city %}
+                        {{ profile.city }}<br>
+                    {% endif %}
+                </p>
+
+                {% if profile.telephone %}
+                    <p><i class="fa fa-phone"></i>
+                        <abbr title="Τηλέφωνο">Τ</abbr>: {{ profile.telephone }}
+                    </p>
+                {% endif %}
+                {% if profile.mobile %}
+                    <p><i class="fa fa-mobile fa-lg"></i>
+                        <abbr title="Κινητό">Κ</abbr>: {{ profile.mobile }}
+                    </p>
+                {% endif %}
+                {% if profile.email %}
+                    <p><i class="fa fa-envelope-o"></i>
+                        <abbr title="Email">E</abbr>: <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Προϋπηρεσία</h3>
+            </div>
+            <div class="col-sm-8">
+                {% for experience in profile.experience.all|dictsortreversed:"from_year"|dictsortreversed:"from_month" %}
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <h3>{{ experience.title }}</h3>
+                            <h6>{{ experience.company }}</h6>
+                            <p style="margin-top:20px;"><strong>Περίοδος: </strong>{{ experience.get_from_month_display }} {{ experience.from_year }} - {% if experience.to_month %}{{ experience.get_to_month_display }} {{ experience.to_year }}{% else %}Σήμερα{% endif %}</p>
+                        </div>
+                        <div class="col-sm-7">
+                            <p style="margin-top:10px;">{{ experience.description|safe }}</p>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}<hr>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Σπουδές</h3>
+            </div>
+            <div class="col-sm-8">
+                {% for education in profile.education.all|dictsortreversed:"from_year" %}
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <h3>{{ education.degree }}</h3>
+                            <h6>{{ education.institution }}</h6>
+                            <p style="margin-top:40px;"><strong>Περίοδος: </strong>{{ education.from_year }} - {% if education.to_year %}{{ education.to_year }}{% else %}Σήμερα{% endif %}</p>
+                        </div>
+                        <div class="col-sm-7">
+                          <p style="margin-top:10px;">{{ education.comments|safe }}</p>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}<hr>{% endif %}
+                 {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock content %}

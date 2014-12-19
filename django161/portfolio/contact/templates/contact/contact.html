@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    Portfolio Site - Albums
+{% endblock title %}
+
+{% block styling %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'contact/css/modern-business.css' %}" rel="stylesheet" media="screen">
+{% endblock styling %}
+
+{% block classcontact %}class="active"{% endblock classcontact %}
+
+{% block content %}
+<!-- Page Heading/Breadcrumbs -->
+        <div class="page-header">
+            <h1>Επικοινωνία</h1>
+        </div>
+        <!-- /.row -->
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- Contact Details Column -->
+            <div class="col-sm-6 col-md-5">
+                <h3>Στοιχεία Επικοινωνίας</h3>
+                {% for contact in contacts %}
+                    {% if contact.title or contact.address or contact.city or contact.po_box%}
+                        <p>
+                        {% if contact.title %}
+                          {{ contact.title }}<br>
+                        {% endif %}
+
+                        {% if contact.address %}
+                          {{ contact.address }}<br>
+                        {% endif %}
+                        {% if contact.city or contact.po_box %}
+                            {{ contact.city }}{% if contact.po_box %}, {{ contact.po_box }} {% endif %}<br>
+                        {% endif %}
+                        </p>
+                    {% endif %}
+                    {% if contact.telephone %}
+                        <p><i class="fa fa-phone"></i>
+                            <abbr title="Τηλέφωνο">Τ</abbr>: {{ contact.telephone }}
+                        </p>
+                    {% endif %}
+                    {% if contact.mobile %}
+                        <p><i class="fa fa-mobile fa-lg"></i>
+                            <abbr title="Κινητό">Κ</abbr>: {{ contact.mobile }}
+                        </p>
+                    {% endif %}
+                    {% if contact.fax %}
+                        <p><i class="fa fa-fax"></i>
+                            <abbr title="Φαξ">Φ</abbr>: {{ contact.fax }}
+                        </p>
+                    {% endif %}
+                    {% if contact.email %}
+                        <p><i class="fa fa-envelope-o"></i>
+                            <abbr title="Email">E</abbr>: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                        </p>
+                    {% endif %}
+
+                    <a href="https://www.google.com/maps/search/{{contact.address}},{{contact.city}}/" target="_blank">
+                        <img class="img-responsive img-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?center={{contact.address}},{{contact.city}}&zoom=15&size=400x223&markers=color:red|{{contact.address}},{{contact.city}}&sensor=false">
+                    </a>
+                {% endfor %}
+            </div>
+
+            <div class="col-sm-6 col-md-7">
+                {% if messages %}
+                    <div id="notifications">
+                        {% for message in messages %}
+                            <div class="alert alert-dismissable alert-{{ message.tags }}">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                              {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <h3>Επικοινωνήστε μαζί μου</h3>
+                <form action="{% url 'contactdetail' %}" name="sentMessage" id="contactForm" method="POST">
+                    {% csrf_token %}
+                    <div class="control-group form-group">
+                        <div class="controls">
+                            <label class="control-label" for="name">Ονοματεπώνυμο</label>
+                            <input type="text" class="form-control" name="name" id="name" required data-validation-required-message="Please enter your name."  autofocus>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    <div class="control-group form-group">
+                        <div class="controls">
+                            <label class="control-label" for="email">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" required data-validation-required-message="Please enter your email address.">
+                        </div>
+                    </div>
+                    <div class="control-group form-group">
+                        <div class="controls">
+                            <label class="control-label" for="message">Μήνυμα</label>
+                            <textarea rows="10" cols="100" class="form-control" name="message" id="message" required data-validation-required-message="Please enter your message" maxlength="999" style="resize:none"></textarea>
+                        </div>
+                    </div>
+                    <div id="success"></div>
+                    <!-- For success/fail messages -->
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">Αποστολή</button>
+                    </div>
+                    
+                </form>
+            </div>
+
+        </div>
+        <!-- /.row -->
+{% endblock content %}
+

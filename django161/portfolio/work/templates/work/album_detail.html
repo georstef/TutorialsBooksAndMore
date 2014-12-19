@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+Portfolio Site - Albums
+{% endblock title %}
+
+{% block styling %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'work/css/modern-business.css' %}" rel="stylesheet">
+    <link href="{% static 'work/css/jquery.fancybox.css' %}" rel="stylesheet" media="screen">
+    <!-- Custom thumbnails
+    <link href="{% static 'work/css/custom-thumbnail.css' %}" rel="stylesheet" media="screen">
+     -->
+{% endblock styling %}
+
+{% block classwork %}class="active"{% endblock classwork %}
+
+{% block content %}
+    <!-- Page Heading/Breadcrumbs -->
+    <div class="page-header">
+        <h1>Έργο</h1>
+    </div>
+    <!-- /.row -->
+
+    <!-- Intro Content -->
+    <div class="row">
+        <div class="col-sm-6">
+            <!--
+            <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+            -->
+            <img class="img-responsive" src="{{ album.get_cover_photo.image.url }}" alt="{{ album.get_cover_photo.title }}">
+        </div>
+        <div class="col-md-6">
+            <h2>{{ album.title }}</h2>
+            <p>{{ album.description|safe }}</p>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <div class="page-header">
+        <h1>Εικόνες</h1>
+    </div>
+
+    <div class="row">
+        <div class='list-group gallery'>
+            {% for photo in album.photo.all %}
+                {% if photo.image %}
+                    <div class='col-xs-6 col-sm-4 col-md-3'>
+                        <a class="thumbnail fancybox" rel="photogroup" title="{{ photo.title }}" href="{{ photo.image.url }}">
+                            <img class="img-responsive img-hover" alt="{{ photo.title }}" src="{{ photo.image.url }}" />
+
+                            <div class='text-center'>
+                                <small class='text-muted'>{{ photo.title }}</small>
+                            </div> <!-- text-right / end -->
+                        </a>
+                    </div> <!-- col / end -->
+                {% endif %}
+            {% endfor %}
+        </div> <!-- list-group / end -->
+	</div> <!-- row / end -->
+
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'work/js/jquery.fancybox.js' %}"></script>
+{% endblock javascript %}
