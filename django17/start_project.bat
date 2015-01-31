@@ -1,3 +1,3 @@
 call C:\Python34\envdjango17\scripts\activate.bat
-C:\Python34\envdjango17\Lib\site-packages\django\bin\django-admin.py startproject project_name
+C:\Python34\envdjango17\scripts\django-admin startproject project-name-goes-here
 pause
