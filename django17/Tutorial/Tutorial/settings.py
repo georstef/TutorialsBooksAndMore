@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'polls',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,7 +61,7 @@ WSGI_APPLICATION = 'Tutorial.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'TutorialDjango17',
+        'NAME': 'tutorialdjango17',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '',  # empty means localhost
@@ -86,3 +87,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'Templates')] # list  iterable of directories to check when loading Django templates; it’s a search path

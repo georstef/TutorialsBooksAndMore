@@ -1,3 +1,3 @@
 call C:\Python34\envdjango17\scripts\activate.bat
-manage.py syncdb
+..\manage.py makemigrations polls
 pause
