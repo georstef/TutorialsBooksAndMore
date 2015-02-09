@@ -88,4 +88,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'Templates')] # list  iterable of directories to check when loading Django templates; it’s a search path
+# list  iterable of directories to check when loading Django templates; it's a search path
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'Templates')]

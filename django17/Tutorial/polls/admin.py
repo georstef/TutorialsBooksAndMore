@@ -13,7 +13,7 @@ class ChoiceInlineStacked(admin.StackedInline):
 # class for detail table Choice (to help show it in Question form - Tabular meaning like a grid)
 class ChoiceInlineTabular(admin.TabularInline):
     model = Choice
-    exclude = ['votes'] # to hide specific fields
+    exclude = ['votes']  # to hide specific fields
     extra = 0  # how many Choice records to show by default
 
     
@@ -28,9 +28,7 @@ class QuestionAdmin(admin.ModelAdmin):
     ]
     inlines = [ChoiceInlineTabular]  # adds Choices table Stacked or Tabular or both
     list_filter = ['question_text', 'pub_date']  # add predefined filters for fields 'question_text' and 'pub_date'
-    search_fields = ['question_text', 'choice__choice_text'] # adds ONE search filter for field 'question_text' and detail table field 'choice__choice_text'
-    list_per_page  = 2  # pagination for grid, default is 100 records
+    search_fields = ['question_text', 'choice__choice_text']  # adds ONE search filter for field 'question_text' and detail table field 'choice__choice_text'
+    list_per_page = 2  # pagination for grid, default is 100 records
 
-admin.site.register(Question ,QuestionAdmin)  # register a table with an admin object ()
-
-
+admin.site.register(Question, QuestionAdmin)  # register a table with an admin object ()
