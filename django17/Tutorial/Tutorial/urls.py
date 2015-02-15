@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+import polls.urls
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'Tutorial.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+    url(r'^$', include(polls.urls)),  # or include('polls.urls') <- as string without import
+
+    url(r'^polls/', include('polls.urls')),  # there is not $ in the regex
 
     url(r'^admin/', include(admin.site.urls)),
 )
