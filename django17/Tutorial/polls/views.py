@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.core.urlresolvers import reverse
 from django.template import RequestContext, loader
-from polls.models import Question
+from polls.models import Question, Choice
 
 def index(request):
     question_list = Question.objects.order_by('-pub_date')[:5]  # sql -> ORDER BY pub_date desc LIMIT 5
@@ -26,8 +27,18 @@ def detail(request, question_id):
 
 
 def result(request, question_id):
-    return HttpResponse('result %s' % question_id)
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/result.html', {'question': question})
 
 
 def vote(request, question_id):
-    return HttpResponse('vote %s' % question_id)
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'polls/detail.html', {'question': question, 'error_message': 'Please make a choice'})
+
+    selected_choice.votes += 1
+    selected_choice.save()
+    # return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
+    return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
