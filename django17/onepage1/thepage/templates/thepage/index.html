@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load staticfiles %}
 
 {% block styling %}
@@ -13,8 +13,8 @@
     <header class="header-image">
         <div class="headline">
             <div class="container">
-                <h1>Title</h1>
-                <h2>Subtitle</h2>
+                <h1>Arabella</h1>
+                <h3>Πλωτό Μπαρ</h3> 
             </div>
         </div>
     </header>
@@ -25,8 +25,8 @@
     <hr class="featurette-divider">
 
     <!-- First Featurette -->
-    <div class="featurette" id="about">
-        <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+    <div class="featurette" id="bar">
+        <img class="featurette-image img-circle img-responsive pull-right" src="{% static 'thepage/images/bar500x500.jpg' %}">
         <h2 class="featurette-heading">This First Heading
             <span class="text-muted">Will Catch Your Eye</span>
         </h2>
@@ -36,8 +36,8 @@
     <hr class="featurette-divider">
 
     <!-- Second Featurette -->
-    <div class="featurette" id="services">
-        <img class="featurette-image img-circle img-responsive pull-left" src="http://placehold.it/500x500">
+    <div class="featurette" id="internal">
+        <img class="featurette-image img-circle img-responsive pull-left" src="{% static 'thepage/images/internal500x500.jpg' %}">
         <h2 class="featurette-heading">The Second Heading
             <span class="text-muted">Is Pretty Cool Too.</span>
         </h2>
@@ -47,8 +47,8 @@
     <hr class="featurette-divider">
 
     <!-- Third Featurette -->
-    <div class="featurette" id="contact">
-        <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+    <div class="featurette" id="bolta">
+        <img class="featurette-image img-circle img-responsive pull-right" src="{% static 'thepage/images/bolta500x500.jpg' %}">
         <h2 class="featurette-heading">The Third Heading
             <span class="text-muted">Will Seal the Deal.</span>
         </h2>

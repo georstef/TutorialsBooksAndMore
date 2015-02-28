@@ -4,15 +4,18 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
+
 body {
-    margin-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    margin-top: 50px;  /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    /* background-color: black; */
 }
+
 
 .header-image {
     display: block;
     width: 100%;
     text-align: center;
-    background: url('http://placehold.it/1900x500') no-repeat center center scroll;
+    background: url('../images/header_image.jpg') no-repeat center center scroll;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -26,21 +29,28 @@ body {
 .headline h1 {
     font-size: 130px;
     background: #fff;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.6);
 }
 
 .headline h2 {
     font-size: 77px;
     background: #fff;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.6);
+}
+
+.headline h3 {
+    font-size: 50px;
+    background: #fff;
+    background: rgba(255,255,255,0.6);
 }
 
 .featurette-divider {
-    margin: 80px 0;
+    margin: 50px 0;
 }
 
 .featurette {
     overflow: hidden;
+    padding-top: 50px;
 }
 
 .featurette-image.pull-left {
