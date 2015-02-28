@@ -36,6 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
+    'thepage',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,8 +60,12 @@ WSGI_APPLICATION = 'onepage1.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django17onepage1',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '',  # empty means localhost
+        'PORT': '3306',
     }
 }
 
@@ -68,7 +74,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC+02:00'
 
 USE_I18N = True
 
@@ -81,3 +87,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# list  iterable of directories to check when loading Django templates; it's a search path
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'Templates')]
