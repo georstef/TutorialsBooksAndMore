@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'debug_toolbar',
     'polls',
 )
@@ -90,3 +91,11 @@ STATIC_URL = '/static/'
 
 # list  iterable of directories to check when loading Django templates; it's a search path
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'Templates')]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
