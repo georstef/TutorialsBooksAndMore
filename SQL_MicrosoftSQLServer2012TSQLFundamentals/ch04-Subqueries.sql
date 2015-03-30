@@ -28,6 +28,18 @@ where
   having count(*) = (select top 1 count(*) as cnt from Sales.Orders group by custid order by cnt desc)
 )
 
+-- a better solution
+SELECT 
+  custid, orderid, orderdate, empid
+FROM 
+  Sales.Orders
+WHERE 
+  custid IN
+  (SELECT TOP (1) WITH TIES O.custid
+   FROM Sales.Orders AS O
+   GROUP BY O.custid
+   ORDER BY COUNT(*) DESC)
+   
 
 -- 3
 -- Write a query that returns employees
