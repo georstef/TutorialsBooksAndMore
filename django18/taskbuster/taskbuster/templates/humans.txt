@@ -2,14 +2,13 @@
 # The humans responsible & technology colophon
 
 # TEAM
-
-    <name> -- <role> -- <twitter>
+    GSP -- Developer -- @something_goes_here
 
 # THANKS
-
-    <name>
+    something goes here too
 
 # TECHNOLOGY COLOPHON
-
     HTML5, CSS3
     jQuery, Modernizr
+    Django 1.8
+    Python 3.4
