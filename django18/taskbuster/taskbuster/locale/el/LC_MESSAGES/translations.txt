@@ -1,0 +1,22 @@
+﻿#: .\taskbuster\settings\base.py:86
+msgid "English"
+msgstr ""
+
+#: .\taskbuster\settings\base.py:87
+msgid "Greek"
+msgstr ""
+
+#: .\taskbuster\templates\taskbuster\index.html:10
+msgid "Welcome to TaskBuster!"
+msgstr "Καλώς Ήρθατε στο TaskBuster!"
+
+#: .\taskbuster\templates\taskbuster\index.html:11
+msgid ""
+"TaskBuster is a simple Task manager that helps you organize your daylife. </"
+"br> You can create todo lists, periodic tasks and more!"
+msgstr "To TaskBuster είναι ένα απλό <κάτι> που βοηθάει στην οργάνωση της ημέρας. </"
+"br> Μπορείς να δημιουργήσεις λίστες κ.τ.λ.!"
+
+#: .\taskbuster\templates\taskbuster\index.html:12
+msgid "Learn more"
+msgstr "Μάθε περισσότερα"

@@ -15,10 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.conf.urls.i18n import i18n_patterns
 from .views import home, home_files
 
+# this will "use" www.mysite.com
 urlpatterns = [
-    url(r'^$', home, name='home'),
     url(r'^(?P<filename>(robots.txt)|(humans.txt))$', home_files, name='home-files'),
-    url(r'^admin/', include(admin.site.urls)),
 ]
+
+# this is used for i18n and "opens" www.mysite.com/en/ or www.mysite.com/el/ instead of www.mysite.com
+urlpatterns += i18n_patterns(
+    url(r'^$', home, name='home'),
+    url(r'^admin/', include(admin.site.urls)),
+)
