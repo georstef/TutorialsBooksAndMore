@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load l10n %}
+{% load tz %}
 
 {% block head_title %}TaskBuster Django Tutorial{% endblock %}
 
@@ -17,21 +18,29 @@
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h2 id="local-date">{{today}}</h2>
           <p>This is the time using your "i18n" information</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>        
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h2 id="non-local-date">{{today|unlocalize}}</h2>
           <p>This is the "unlocalize filter" time format.</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>        
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h2 id="non-local-date">{% localize off %}{{today}}{% endlocalize %}</h2>
           <p>This is the "localize off" time format.</p>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>        
        </div>
+       <div class="col-md-3">
+           <h2>Time Zones</h2>
+           <p> Thessaloniki: <span id="time-tz">{{now|time:"H:i"}}</span></p>
+           <p> UTC: <span id="time-utc">{{now|utc|time:"H:i"}}</span></p>
+           <p> New York: <span id="time-ny"> 
+                  {{now|timezone:"America/New_York"|time:"H:i"}}</span></p>
+           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+       </div>       
       </div>
 
       <hr>
