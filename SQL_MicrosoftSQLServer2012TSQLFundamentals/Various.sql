@@ -31,3 +31,9 @@ select
     END
   as FullYearsBetween
   
+
+-- for getting server version
+SELECT 
+  SERVERPROPERTY('productversion'), 
+  CHARINDEX('.', CAST(SERVERPROPERTY('productversion') as varchar)),
+  left(CAST(SERVERPROPERTY('productversion') as varchar), CHARINDEX('.', CAST(SERVERPROPERTY('productversion') as varchar))-1)
