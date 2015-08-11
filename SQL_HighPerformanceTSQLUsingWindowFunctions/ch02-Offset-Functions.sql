@@ -21,3 +21,25 @@ order by
   custid, 
   orderdate, 
   orderid
+
+
+-- only the first, last and Nth values
+WITH OrdersRN AS
+(
+SELECT 
+  custid, 
+  val,
+  ROW_NUMBER() OVER(PARTITION BY custid ORDER BY orderdate, orderid) AS rna,
+  ROW_NUMBER() OVER(PARTITION BY custid ORDER BY orderdate DESC, orderid DESC) AS rnd
+FROM 
+  Sales.OrderValues
+)
+SELECT 
+  custid,
+  MAX(CASE WHEN rna = 1 THEN val END) AS firstorderval,
+  MAX(CASE WHEN rnd = 1 THEN val END) AS lastorderval,
+  MAX(CASE WHEN rna = 3 THEN val END) AS thirdorderval
+FROM 
+  OrdersRN
+GROUP BY
+  custid;
