@@ -37,3 +37,18 @@ SELECT
   SERVERPROPERTY('productversion'), 
   CHARINDEX('.', CAST(SERVERPROPERTY('productversion') as varchar)),
   left(CAST(SERVERPROPERTY('productversion') as varchar), CHARINDEX('.', CAST(SERVERPROPERTY('productversion') as varchar))-1)
+
+
+-- gaps and islands
+if OBJECT_ID('dbo.t1') is not null drop table t1;
+create table t1 (col1 int not null, CONSTRAINT PK_t1 PRIMARY KEY CLUSTERED (col1));
+insert into t1 (col1) values (2),(3),(11),(12),(13),(27),(33),(34),(35),(42);
+
+with cte as (
+  select
+    col1,
+    col1-ROW_NUMBER() OVER(order by col1) as col2 -- gap?
+  from t1
+)
+select min(col1), max(col1) from cte group by col2 -- islands
+ 
