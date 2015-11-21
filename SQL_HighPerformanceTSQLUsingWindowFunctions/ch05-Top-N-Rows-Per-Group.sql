@@ -58,7 +58,8 @@ CROSS APPLY
     
 -- -----------------------------------------------------
     
--- fast way for no index (really ugly)
+-- fast way for no index (really ugly) but only 1 top value is returned
+-- also know as the carry-along sort (technique/concept)
 -- pack/concatenate all the fields in a string grouped by custid in a CTE
 -- and finally unpack them with substring
 WITH T1 AS
