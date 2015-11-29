@@ -31,3 +31,25 @@ INSERT INTO dbo.detail WITH (TABLOCK) (masterid, childid)
 SELECT MA.n as masterid, CH.n as childid
 FROM dbo.GetNums(1, 100) AS MA
 CROSS JOIN dbo.GetNums(1, 1000) AS CH;
+
+-- -----------------------------------------------
+-- code to create a random number (1..10)
+-- -----------------------------------------------
+select NEWID()                                                  -- get new GUID
+select CHECKSUM(NEWID())                                        -- get the checksum of a GUID (returns int - or +)
+select CHECKSUM(NEWID()) % 10                                   -- mod 10 the checksum of a GUID to return values (-9..9)
+select ABS(CHECKSUM(NEWID()) % 10)                              -- returns absolute values (0..9)
+select CAST(ABS(CHECKSUM(NEWID())) % 10 AS VARCHAR(10))         -- convert to string ('0'..'9')
+select CAST(1 + ABS(CHECKSUM(NEWID())) % 10 AS VARCHAR(10))     -- add 1 to eliminate zero values ('1'..'10')
+
+-- -----------------------------------------------
+-- code to create 10 random dates (with time)
+-- -----------------------------------------------
+SELECT
+  DATEADD(
+    second,
+    1 + ABS(CHECKSUM(NEWID())) % (30*24*60*60), -- 30 days * 24 hours * 60 minutes * 60 seconds
+    '20120101'                                  -- starting date
+  ) AS starttime
+FROM 
+  dbo.GetNums(1, 10) AS Nums
