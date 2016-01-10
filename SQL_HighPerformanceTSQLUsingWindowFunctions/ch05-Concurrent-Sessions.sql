@@ -1,5 +1,5 @@
 -- concurrent sessions  (Max Concurrent Intervals)
--- μέγιστο πλήθος ταυτόχρονων sessions
+-- ΞΌΞ­Ξ³ΞΉΟƒΟ„ΞΏ Ο€Ξ»Ξ®ΞΈΞΏΟ‚ Ο„Ξ±Ο…Ο„ΟΟ‡ΟΞΏΞ½Ο‰Ξ½ sessions
 
 IF OBJECT_ID('dbo.Sessions', 'U') IS NOT NULL DROP TABLE dbo.Sessions;
 CREATE TABLE dbo.Sessions
@@ -49,7 +49,7 @@ app2   4
 -- -----------------------------------------------------------------------------
 WITH TimePoints AS
 (
-  SELECT app, starttime AS ts FROM dbo.Sessions  -- για κάθε session παίρνουμε την έναρξη
+  SELECT app, starttime AS ts FROM dbo.Sessions  -- Ξ³ΞΉΞ± ΞΊΞ¬ΞΈΞµ session Ο€Ξ±Ξ―ΟΞ½ΞΏΟ…ΞΌΞµ Ο„Ξ·Ξ½ Ξ­Ξ½Ξ±ΟΞΎΞ·
 ),
 Counts AS
 (
@@ -58,17 +58,17 @@ Counts AS
     ts,
     (
      SELECT COUNT(*)
-     FROM dbo.Sessions AS S           -- πλήθος session που αφορούν:
-     WHERE S.app = P.app AND          -- το ίδιο app και
-           S.starttime <= P.ts AND    -- έχουν αρχίσει πρίν από την έναρξη του τρέχοντος session
-           S.endtime > P.ts           -- και έχουν τελειώσει μετά την έναρξη του τρέχοντος session
+     FROM dbo.Sessions AS S           -- Ο€Ξ»Ξ®ΞΈΞΏΟ‚ session Ο€ΞΏΟ… Ξ±Ο†ΞΏΟΞΏΟΞ½:
+     WHERE S.app = P.app AND          -- Ο„ΞΏ Ξ―Ξ΄ΞΉΞΏ app ΞΊΞ±ΞΉ
+           S.starttime <= P.ts AND    -- Ξ­Ο‡ΞΏΟ…Ξ½ Ξ±ΟΟ‡Ξ―ΟƒΞµΞΉ Ο€ΟΞ―Ξ½ Ξ±Ο€Ο Ο„Ξ·Ξ½ Ξ­Ξ½Ξ±ΟΞΎΞ· Ο„ΞΏΟ… Ο„ΟΞ­Ο‡ΞΏΞ½Ο„ΞΏΟ‚ session
+           S.endtime > P.ts           -- ΞΊΞ±ΞΉ Ξ­Ο‡ΞΏΟ…Ξ½ Ο„ΞµΞ»ΞµΞΉΟΟƒΞµΞΉ ΞΌΞµΟ„Ξ¬ Ο„Ξ·Ξ½ Ξ­Ξ½Ξ±ΟΞΎΞ· Ο„ΞΏΟ… Ο„ΟΞ­Ο‡ΞΏΞ½Ο„ΞΏΟ‚ session
     ) AS concurrent
   FROM
     TimePoints AS P
 )
 SELECT
   app,
-  MAX(concurrent) AS mx               -- το μέγιστο πλήθος ταυτόχρονων sessions
+  MAX(concurrent) AS mx               -- Ο„ΞΏ ΞΌΞ­Ξ³ΞΉΟƒΟ„ΞΏ Ο€Ξ»Ξ®ΞΈΞΏΟ‚ Ο„Ξ±Ο…Ο„ΟΟ‡ΟΞΏΞ½Ο‰Ξ½ sessions
 FROM
   Counts
 GROUP BY
