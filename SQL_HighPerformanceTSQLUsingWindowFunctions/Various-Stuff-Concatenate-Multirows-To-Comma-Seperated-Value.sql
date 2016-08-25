@@ -80,3 +80,18 @@ From
             For XML PATH ('')
         ), 2, 1000) as [Eidi]
 From Apomast ST2
+
+
+ -- 4. concatenation in SQL Server 2000 (http://stackoverflow.com/questions/8228832/sql-server-2000-xml-path-error/8229258#8229258)
+declare @s varchar(8000);
+
+select @s = ISNULL(@s, '') + ISNULL(field1, '') + ISNULL(field2, '')... + ','
+from SomeTable
+where ...
+order by ...;
+
+if len(@s) > 1 begin
+  set @s = SUBSTRING(@s, 1, len(@s)-1) -- remove last comma (,)
+end
+
+select @s;
