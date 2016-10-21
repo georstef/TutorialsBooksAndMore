@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:helloworld"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Hello World!" VerticalAlignment="Center" FontSize="72"/>
+        Title="MainWindow" 
+        Height="350" 
+        Width="525"
+        ResizeMode="CanResizeWithGrip"
+        SizeToContent="Height">
+    <Grid Height="319" VerticalAlignment="Bottom" MouseUp="Grid_MouseUp">
+        <TextBlock Name="lblHello" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Hello World!" VerticalAlignment="Center" FontSize="72" MouseUp="lblHello_MouseUp"/>
     </Grid>
 </Window>

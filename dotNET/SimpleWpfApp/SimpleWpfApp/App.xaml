@@ -1,0 +1,12 @@
+﻿<Application x:Class="SimpleWpfApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:SimpleWpfApp"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             Startup="Application_Startup">
+    <Application.Resources>
+        <sys:String x:Key="strGlobalResource">Global Resource Text!</sys:String>
+        <sys:String x:Key="strApp">This is "Global Code Behind" Resource Text!</sys:String>
+    </Application.Resources>
+</Application>

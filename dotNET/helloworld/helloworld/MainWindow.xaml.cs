@@ -25,5 +25,14 @@ namespace helloworld
             InitializeComponent();
         }
 
+        private void lblHello_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+           // MessageBox.Show("You clicked at " + e.GetPosition(this).ToString());
+        }
+
+        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("You clicked the grid at " + e.GetPosition(this).ToString());
+        }
     }
 }
