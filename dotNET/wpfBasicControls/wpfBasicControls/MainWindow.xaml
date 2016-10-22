@@ -5,28 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpfBasicControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid RenderTransformOrigin="0.5,0.5">
-        <StackPanel Name="sPanel">
-            <TextBlock x:Name="textBlock" Margin="10" ToolTip="test" >This is <LineBreak />a TextBlock with multiple lines of text.</TextBlock>
-            <TextBlock Margin="10" TextTrimming="CharacterEllipsis" Foreground="Green" ToolTip="This is a TextBlock control with text that may not be rendered completely, which will be indicated with an ellipsis.">
-                        This is a TextBlock control with text that may not be rendered completely, which will be indicated with an ellipsis.
-            </TextBlock>
-            <TextBlock Margin="10" TextWrapping="Wrap" Foreground="Blue">
-                        This is a TextBlock <Bold>control</Bold> with automatically wrapped text, using the TextWrapping property.
-            </TextBlock>
-            <TextBlock Margin="10" TextWrapping="Wrap">
-                        This text has a <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://www.google.com">link</Hyperlink> in it.
-            </TextBlock>
-            <TextBlock Margin="10" TextWrapping="Wrap">
-                        This <Span FontWeight="Bold">is</Span> a
-                        <Span Background="Silver" Foreground="Maroon">TextBlock</Span>
-                        with <Span TextDecorations="Underline">several</Span>
-                        <Span FontStyle="Italic">Span</Span> elements,
-                        <Span Foreground="Blue">
-                                using a <Bold>variety</Bold> of <Italic>styles</Italic>
-                        </Span>.
-            </TextBlock>
+        Title="MainWindow" Height="750" Width="550">
+    <Grid>
+        <StackPanel x:Name="sPanel">
+            <TextBlock x:Name="textBlock" Margin="10" ToolTip="test" ><Run Text="This is"/><LineBreak /><Run Text="a TextBlock with multiple lines of text."/></TextBlock>
+            <TextBlock Margin="10" TextTrimming="CharacterEllipsis" Foreground="Green" ToolTip="This is a TextBlock control with text that may not be rendered completely, which will be indicated with an ellipsis."><Run Text="This is a TextBlock control with text that may not be rendered completely, which will be indicated with an ellipsis."/></TextBlock>
+            <TextBlock Margin="10" TextWrapping="Wrap" Foreground="Blue"><Run Text="This is a TextBlock "/><Bold><Run Text="control"/></Bold><Run Text=" with automatically wrapped text, using the TextWrapping property."/></TextBlock>
+            <TextBlock Margin="10" TextWrapping="Wrap"><Run Text="This text has a "/><Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://www.google.com"><Run Text="link"/></Hyperlink><Run Text=" in it."/></TextBlock>
+            <TextBlock Margin="10" TextWrapping="Wrap"><Run Text="This "/><Span FontWeight="Bold"><Run Text="is"/></Span><Run Text=" a "/><Span Background="Silver" Foreground="Maroon"><Run Text="TextBlock"/></Span><Run Text=" with "/><Span TextDecorations="Underline"><Run Text="several"/></Span><Run Text=" "/><Span FontStyle="Italic"><Run Text="Span"/></Span><Run Text=" elements, "/><Span Foreground="Blue"><Run Text="using a "/><Bold><Run Text="variety"/></Bold><Run Text=" of "/><Italic><Run Text="styles"/></Italic></Span><Run Text="."/></TextBlock>
+
+            <Label Margin="10" Target="{Binding ElementName=txtName}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="http://cdn1.iconfinder.com/data/icons/fatcow/16/bullet_green.png" />
+                    <AccessText Text="_Name:" />
+                </StackPanel>
+            </Label>
+            <TextBox Margin="10, 0, 10, 0" Name="txtName" />
+            <Label Margin="5" Content="_Mail:" Target="{Binding ElementName=txtMail}" />
+            <TextBox Margin="10,0,10,10" Name="txtMail" AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="el-GR"/>
+            <Label Margin="10,0,10,0">Password:</Label>
+            <PasswordBox Margin="10,0,10,10" Name="edtPassword" PasswordChar="X" MaxLength="6" LostFocus="edtPassword_LostFocus" />
+
+            <Label Margin="10,0,10,0" Content="Selection example:" />
+            <DockPanel Margin="10,0,10,0">
+                <TextBox SelectionChanged="TextBox_SelectionChanged" DockPanel.Dock="Top" />
+                <TextBox Name="txtStatus" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" />
+            </DockPanel>
+
+            <Label Margin="10,10,10,0" FontWeight="Bold">Check box example</Label>
+            <CheckBox IsThreeState="True" Name="cbAllFeatures" Checked="cbAllFeatures_CheckedChanged" Unchecked="cbAllFeatures_CheckedChanged">Enable all</CheckBox>
+            <StackPanel>
+                <CheckBox Margin="10,0,10,0" Name="cbFeatureAbc" Checked="cbFeature_CheckedChanged" Unchecked="cbFeature_CheckedChanged">
+                    <TextBlock>Enable feature
+                        <Run Foreground="IndianRed" FontWeight="Bold">ABC</Run>
+                    </TextBlock>
+                </CheckBox>
+                <CheckBox Margin="10,0,10,0" IsChecked="True" Name="cbFeatureXyz" Checked="cbFeature_CheckedChanged" Unchecked="cbFeature_CheckedChanged">
+                    <WrapPanel>
+                        <TextBlock>Enable feature <Run FontWeight="Bold">XYZ</Run></TextBlock>
+                        <Image Source="http://cdn1.iconfinder.com/data/icons/fatcow/16/bullet_blue.png" Width="16" Height="16" Margin="5,0" />
+                    </WrapPanel>
+                </CheckBox>
+                <CheckBox Margin="10,0,10,0" Name="cbFeatureWww" Checked="cbFeature_CheckedChanged" Unchecked="cbFeature_CheckedChanged">Enable feature WWW</CheckBox>
+            </StackPanel>
+            <Label Margin="10,10,10,0" FontWeight="Bold">Radio button example</Label>
+            <StackPanel>
+                <RadioButton Margin="10,0,10,0" GroupName="simple">Yes</RadioButton>
+                <RadioButton Margin="10,0,10,0" GroupName="simple" >No</RadioButton>
+                <RadioButton Margin="10,0,10,0" GroupName="simple" IsChecked="True">
+                    <WrapPanel>
+                        <TextBlock Text="Maybe" Foreground="Gray" />
+                        <Image Source="http://cdn1.iconfinder.com/data/icons/fatcow/16/bullet_red.png" Width="16" Height="16" Margin="0,0,5,0" />
+                    </WrapPanel>
+                </RadioButton>
+
+                <Label Margin="10,10,10,0" FontWeight="Bold">Male or female?</Label>
+                <RadioButton Margin="10,0,10,0" GroupName="sex">Male</RadioButton>
+                <RadioButton Margin="10,0,10,0" GroupName="sex" IsChecked="True">Female</RadioButton>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

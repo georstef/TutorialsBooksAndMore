@@ -43,5 +43,35 @@ namespace wpfBasicControls
         {
             System.Diagnostics.Process.Start(e.Uri.AbsoluteUri);
         }
+
+        private void TextBox_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            txtStatus.Text = "Selection starts at character #" + textBox.SelectionStart + Environment.NewLine;
+            txtStatus.Text += "Selection is " + textBox.SelectionLength + " character(s) long" + Environment.NewLine;
+            txtStatus.Text += "Selected text: '" + textBox.SelectedText + "'";
+        }
+
+        private void cbAllFeatures_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            bool newVal = (cbAllFeatures.IsChecked == true);
+            cbFeatureAbc.IsChecked = newVal;
+            cbFeatureXyz.IsChecked = newVal;
+            cbFeatureWww.IsChecked = newVal;
+        }
+
+        private void cbFeature_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            cbAllFeatures.IsChecked = null;
+            if ((cbFeatureAbc.IsChecked == true) && (cbFeatureXyz.IsChecked == true) && (cbFeatureWww.IsChecked == true))
+                cbAllFeatures.IsChecked = true;
+            if ((cbFeatureAbc.IsChecked == false) && (cbFeatureXyz.IsChecked == false) && (cbFeatureWww.IsChecked == false))
+                cbAllFeatures.IsChecked = false;
+        }
+
+        private void edtPassword_LostFocus(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(edtPassword.Password);
+        }
     }
 }
