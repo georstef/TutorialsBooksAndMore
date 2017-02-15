@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="MDIexample.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
+        xmlns:local="clr-namespace:MDIexample"
+        mc:Ignorable="d"
+        Height="83.415" 
+        Width="253.171">
+    <Grid Margin="0,0,10,10" Width="245" Height="75">
+        <syncfusion:ButtonAdv x:Name="btnSelect" 
+                              HorizontalAlignment="Left" 
+                              Height="29" 
+                              Label="Επιλογή" 
+                              Margin="10,0,0,10" 
+                              VerticalAlignment="Bottom" 
+                              Width="100"
+                              Click="btnSelect_Click" 
+                              />
+
+        <syncfusion:ButtonAdv x:Name="btnExit"
+                              HorizontalAlignment="Right"
+                              Height="29" 
+                              Label="Έξοδος" 
+                              Margin="0,0,10,10" 
+                              VerticalAlignment="Bottom" 
+                              Width="100"
+                              Click="btnExit_Click" 
+                              />
+    </Grid>
+</UserControl>
