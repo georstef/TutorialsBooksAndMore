@@ -1,0 +1,71 @@
+-- update a field in all tables
+exec [dbo].[StPr_UpdateAadeUID] 
+  @aadeSGAUID='{E33E8008-799B-499F-B5E2-403A8A218B3C}', 
+  @aadeUID='06D1895745DA02BC11D0AB29A056DDA8D474F80A'
+  
+-- ------------------------------------------------------
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[StPr_UpdateAadeUID]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[StPr_UpdateAadeUID]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+SET ANSI_NULLS OFF
+GO
+
+/*
+  Ενημέρωση όλων των πινάκων που έχουν aadeSGAUID με το aadeUID 
+  (ψάχνει σε όλους τους πίνακες της βάσης)
+
+  @Author George S.
+  @Version 13 Αυγ 2020 | 16:35, Created
+
+  Copyright (c) SGA. All rights reserved.
+*/
+CREATE PROCEDURE [dbo].[StPr_UpdateAadeUID]
+@aadeSGAUID uniqueidentifier,
+@aadeUID varchar(50)
+AS
+BEGIN TRANSACTION
+  DECLARE @SQL nvarchar(4000)
+  DECLARE @TABLENAME nvarchar(4000)
+  DECLARE @sLogFileText varchar(2000)
+
+  exec StPr_WriteSQLServerLog '**** Start Update ΑΑΔΕ UID ****'
+  SET @sLogFileText = concat('@aadeSGAUID: ', @aadeSGAUID, ' | @aadeUID: ', @aadeUID)
+  exec StPr_WriteSQLServerLog @sLogFileText
+
+  DECLARE TableCursor CURSOR
+  FOR
+  SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'aadeSGAUID'
+  OPEN TableCursor 
+  FETCH NEXT FROM TableCursor INTO @TABLENAME
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+    -- το update δεν πρέπει να τρέξει στους πίνακες της ΑΑΔΕ
+    IF upper(@TABLENAME) not in ('AADEINVOICEMASTER', 'AADEINVOICEDETAIL', 'AADEINVOICEDETAILSUMS') begin
+    -- το aadeUID αλλάζει μόνο όταν το aadeSGAUID είναι το συγκεκριμένο
+      SET @SQL = N'update ' + @TABLENAME + ' SET aadeUID = @SQLaadeUID WHERE aadeSGAUID = @SQLaadeSGAUID';
+
+      SET @sLogFileText = concat('Update Table: ', @TABLENAME)
+      exec StPr_WriteSQLServerLog @sLogFileText
+
+      EXEC sp_executesql 
+            @SQL, 
+            N'@SQLaadeUID varchar(50), @SQLaadeSGAUID uniqueidentifier', 
+            @SQLaadeUID = @aadeUID, 
+            @SQLaadeSGAUID = @aadeSGAUID;
+    END -- if
+
+    FETCH NEXT FROM TableCursor INTO @TABLENAME
+  END
+  CLOSE TableCursor 
+  DEALLOCATE TableCursor
+
+  exec StPr_WriteSQLServerLog '*******************************'
+COMMIT TRANSACTION
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
