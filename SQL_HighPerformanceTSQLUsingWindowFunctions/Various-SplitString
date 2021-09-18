@@ -1,0 +1,39 @@
+/*
+  UDF για τον διαχωρισμό ενός concatenated string
+
+  @Author George Pratanopoulos
+  @Version 13-Ιουλ-2010 | 14:22 Created
+*/
+CREATE FUNCTION [dbo].[SplitString] (@String varchar(4000), @Separator char(1))
+RETURNS @Values TABLE (value varchar(4000))
+AS
+BEGIN
+  DECLARE @SeparatorPosition INT
+  DECLARE @CurrentValue varchar(4000)
+
+  SET @SeparatorPosition = 1 
+  WHILE (@SeparatorPosition > 0) and (LEN(@String) > 0)
+    BEGIN
+      -- βρίσκει την θέση του 1ου separator (συνήθως το κόμμα)
+      SET @SeparatorPosition = CHARINDEX(@Separator, @String)
+      
+      IF @SeparatorPosition  > 0
+        SELECT @CurrentValue = LEFT(@String, @SeparatorPosition - 1) -- παίρνει το string πριν το separator
+      ELSE
+        SELECT @CurrentValue = @String -- παίρνει όλα το string 
+
+      -- μετατροπή του string σε αριθμό και αποθήκευση
+      INSERT @Values(value) VALUES(CAST(@CurrentValue as varchar(4000)))
+
+      -- αφαίρεση από το αρχικό string του string που πήραμε παραπάνω
+      SET @String = LTRIM(SUBSTRING(@String, @SeparatorPosition + 1, LEN(@String)))
+      
+    END
+  RETURN
+END
+
+-- can be used in inside UDF (that don't allow sp_executesql)
+-- for passing multivalues as string
+-- eg. 
+-- set @IDstr = '1, 3, 65' (or '***'  <-- this is another "magic" trick)
+-- select * from T1 where ((CAST(ID AS varchar(3)) in (select value from dbo.SplitString(@IDstr, ','))) OR (@IDstr = '***'))
