@@ -31,11 +31,11 @@ sys.xp_readerrorlog
   6. Search to end time
   7. Sort order for results: N'asc' = ascending, N'desc' = descending
 
-  eg. => exec master.dbo.xp_readerrorlog 0, 1, N'sga |', null, null, null, N'desc'
+  eg. => exec master.dbo.xp_readerrorlog 0, 1, N'prat |', null, null, null, N'desc'
 
   Note:
-  1. for later versions of SQL Server you may need to use double quotes or you might get this error (eg. "sga | ")
-  2. or try this, putting N before each parameter (eg. N'sga | ')
+  1. for later versions of SQL Server you may need to use double quotes or you might get this error (eg. "prat | ")
+  2. or try this, putting N before each parameter (eg. N'prat | ')
 
 
 Stored procedure for SQL SERVER logging 
@@ -50,17 +50,16 @@ Stored procedure for SQL SERVER logging
   informational msg: exec StPr_WriteSQLServerLog 'rock out with your cock out'
   warning msg: exec StPr_WriteSQLServerLog 'rock out with your cock out', warning
   error msg: exec StPr_WriteSQLServerLog 'rock out with your cock out', error
-  msg can be viewed with (sql server 2000): exec master.dbo.xp_readerrorlog 0, 1, N'sga |', null, null, null, N'desc'
-  msg can be viewed with (sql server 2008+): exec sys.xp_readerrorlog 0, 1, N'sga |', null, null, null, N'desc'
+  msg can be viewed with (sql server 2000): exec master.dbo.xp_readerrorlog 0, 1, N'prat |', null, null, null, N'desc'
+  msg can be viewed with (sql server 2008+): exec sys.xp_readerrorlog 0, 1, N'prat |', null, null, null, N'desc'
 
-  Copyright (c) SGA. All rights reserved.
 */
 CREATE PROCEDURE StPr_WriteSQLServerLog
   @Message varchar(2000),
   @Severity varchar(15) = 'informational' 
 AS
 BEGIN
-  set @Message = 'sga | ' + @Message; -- βάζουμε πρόθεμα για να μπορούμε να ξεχωρίσουμε τις εγγραφές που βάλαμε εμείς (από τις εγγραφές του SQL Server)
+  set @Message = 'prat | ' + @Message; -- βάζουμε πρόθεμα για να μπορούμε να ξεχωρίσουμε τις εγγραφές που βάλαμε εμείς (από τις εγγραφές του SQL Server)
   -- EXEC xp_logevent 9999, @Message, @Severity; SQL SERVER 2005+
   EXEC master.dbo.xp_logevent 9999, @Message, @Severity; -- SQL SERVER 2000+
 END
