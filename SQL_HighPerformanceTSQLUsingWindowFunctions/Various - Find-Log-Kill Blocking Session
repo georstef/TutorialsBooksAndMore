@@ -1,0 +1,230 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[_FindBlockingSession]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[_FindBlockingSession]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+SET ANSI_NULLS OFF
+GO
+
+/*-------------------------------------------------------------------------------
+  επιστρέφει το βρίσκει το session_id που κολλάει το πρόγραμμα 
+
+  @Author georsted
+  @Version 30 Οκτ 2021 | 09:28, initial version
+  
+-------------------------------------------------------------------------------*/
+CREATE PROCEDURE [dbo].[_FindBlockingSession] (@blocking_session_id int OUTPUT) AS
+BEGIN
+  DECLARE @sLogFileText varchar(4000)  
+
+  exec StPr_WriteSQLServerLog '**** Find Blocking Session ****'
+
+  SET @blocking_session_id = (SELECT TOP 1 blocking_session_id FROM [master].[sys].[dm_exec_requests] WHERE blocking_session_id <> 0);
+
+  set @sLogFileText = 'Blocking Session: ' + cast(@blocking_session_id as varchar)
+  exec StPr_WriteSQLServerLog @sLogFileText
+  
+END
+
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[_LogSession]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[_LogSession]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+SET ANSI_NULLS OFF
+GO
+
+/*-------------------------------------------------------------------------------
+  καταγράφει στο log τα δεδομένα ενός session 
+
+  @Author georstef
+  @Version 30 Οκτ 2021 | 09:08, initial version
+  
+-------------------------------------------------------------------------------*/
+CREATE PROCEDURE _LogSession
+  @session_id int
+AS
+BEGIN
+  DECLARE @sLogFileText varchar(4000)  
+  DECLARE @blocking_command varchar(4000)  
+  DECLARE @blocking_host_name varchar(1000)  
+  DECLARE @blocking_application varchar(1000)  
+
+  exec StPr_WriteSQLServerLog '**** Log Session Data ****'
+
+  IF @session_id > 0
+  BEGIN
+    SELECT
+      @blocking_command = (SELECT [text] FROM sys.dm_exec_sql_text(sql_handle)),
+      @blocking_host_name = hostname,
+      @blocking_application = program_name
+      /*
+      (SELECT [text] FROM sys.dm_exec_sql_text(sql_handle)) AS SqlCommand,
+      spid AS [Process ID], status AS [Status],
+      hostname AS [Host Name], 
+      hostprocess AS [Host Process], 
+      loginame AS [User], 
+      open_tran AS [Open Trans], 
+      cmd AS [Command],
+      blocked AS [Blocked], 
+      CONVERT(VARCHAR(19), waittime) AS [Wait Time],
+      [Waiting] =
+        Case waittype
+        WHEN 0x0000 THEN SPACE(256)
+        ELSE waitresource
+        END, 
+      login_time AS [Login Time],
+      program_name AS [Application]
+    */
+    FROM 
+      sys.sysprocesses WITH (NOLOCK)
+    WHERE
+      spid = @session_id
+    
+  
+    set @sLogFileText = 'Hostname: ' + @blocking_host_name
+    exec StPr_WriteSQLServerLog @sLogFileText
+
+    set @sLogFileText = 'Application: ' + @blocking_application
+    exec StPr_WriteSQLServerLog @sLogFileText
+
+    set @sLogFileText = 'SQL Command: ' + @blocking_command
+    exec StPr_WriteSQLServerLog @sLogFileText
+  END
+END
+
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[_KillSession]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[_KillSession]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+SET ANSI_NULLS OFF
+GO
+
+/*-------------------------------------------------------------------------------
+  σκοτώνει ένα session
+
+  @Author georstef
+  @Version 03 Ιουν 2016 | 14:24, initial version
+  
+-------------------------------------------------------------------------------*/
+CREATE PROCEDURE _KillSession (@session_id int) AS
+BEGIN
+  DECLARE @sql nvarchar(100);
+  DECLARE @sLogFileText varchar(4000)  
+
+  exec StPr_WriteSQLServerLog '**** Kill Session ****'
+
+  IF @session_id is not null 
+  BEGIN
+    SET @sql = N'KILL ' + cast(@session_id as nvarchar(5))
+    
+    set @sLogFileText = @sql
+    exec StPr_WriteSQLServerLog @sLogFileText
+
+    exec sp_executesql @sql
+  END
+END
+
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[_KillBlockingProcess]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[_KillBlockingProcess]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+SET ANSI_NULLS OFF
+GO
+
+/*-------------------------------------------------------------------------------
+  1. βρίσκει το session_id που κολλάει το πρόγραμμα
+  2. καταγράφει κάποια δεδομένα στο αρχείο log 
+  3. σκοτώνει το session
+
+  @Author georstef
+  @Version 03 Ιουν 2016 | 14:24, initial version
+  @Version 30 Οκτ 2021 | 09:47, georstef: αλλαγές για χρήση άλλων stored procedures
+  
+-------------------------------------------------------------------------------*/
+CREATE PROCEDURE _KillBlockingProcess AS
+BEGIN
+  DECLARE @blocking_session_id int;
+  DECLARE @sql nvarchar(100);
+  DECLARE @sLogFileText varchar(4000)  
+  DECLARE @blocking_command varchar(4000)  
+  DECLARE @blocking_host_name varchar(1000)  
+  DECLARE @blocking_application varchar(1000)  
+
+  exec StPr_WriteSQLServerLog '**** Kill Blocking Process ****'
+  
+  -- find blocking session_id
+  exec _FindBlockingSession @blocking_session_id OUTPUT
+
+  IF @blocking_session_id is not null 
+  BEGIN
+    -- log session
+    exec _LogSession @blocking_session_id
+
+    -- kill session
+    exec _KillSession @blocking_session_id
+  END
+END
+
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+/*
+  simple SQL SERVER logging procedure,
+  mostly for debugging other stored procedures
+  
+  @Author George S. (in memoriam Zaf Keramidas)
+  @Version 31 Μαρ 2020 | 14:53, initial version
+
+  usage:
+  informational msg: exec StPr_WriteSQLServerLog 'rock out with your cock out'
+  warning msg: exec StPr_WriteSQLServerLog 'rock out with your cock out', warning
+  error msg: exec StPr_WriteSQLServerLog 'rock out with your cock out', error
+  msg can be viewed with (sql server 2000): exec master.dbo.xp_readerrorlog 0, 1, N'prat |', null, null, null, N'desc'
+  msg can be viewed with (sql server 2008+): exec sys.xp_readerrorlog 0, 1, N'prat |', null, null, null, N'desc'
+
+*/
+CREATE PROCEDURE StPr_WriteSQLServerLog
+  @Message varchar(2000),
+  @Severity varchar(15) = 'informational' 
+AS
+BEGIN
+  set @Message = 'prat | ' + @Message;
+  -- EXEC xp_logevent 459496, @Message, @Severity; SQL SERVER 2005+
+  EXEC master.dbo.xp_logevent 459496, @Message, @Severity; -- SQL SERVER 2000+
+END
