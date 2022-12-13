@@ -53,3 +53,20 @@ SELECT
   ) AS starttime
 FROM 
   dbo.GetNums(1, 10) AS Nums
+  
+-- -----------------------------------------------
+-- Simple and Forced Parameterization
+-- -----------------------------------------------
+https://www.mssqltips.com/sqlservertip/2935/sql-server-simple-and-forced-parameterization/
+
+--Forced
+ALTER DATABASE AdventureWorks2012 SET PARAMETERIZATION FORCED
+
+--Simple
+ALTER DATABASE AdventureWorks2012 SET PARAMETERIZATION SIMPLE
+
+-- determine the current setting of parameterization
+SELECT name, is_parameterization_forced FROM sys.databases
+-- 1 indicates Forced
+-- 0 indicates Simple
+-- Setting parameterization to FORCED flushes all query plan from cache except for those that are currently running, compiling, or recompiling
