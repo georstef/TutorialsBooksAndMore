@@ -10,7 +10,7 @@ SET @fk_statements = (
       AND TABLE_NAME = &MACRO_TABLE_QUOTED
       AND REFERENCED_TABLE_NAME IS NOT NULL
 );
--- MAKE SURE IT DOES NOT CRASHES IS THERE ARE NOT ANY FOREIGN KEYS
+-- MAKE SURE IT DOES NOT CRASHES IF THERE ARE NOT ANY FOREIGN KEYS
 SET @fk_statements = (select case when @fk_statements is null then 'select 0' else @fk_statements end);
 -- Execute foreign key statements on the target table
 PREPARE fk_stmt FROM @fk_statements;
