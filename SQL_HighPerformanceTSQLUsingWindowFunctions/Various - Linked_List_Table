@@ -1,4 +1,4 @@
-* How to turn an SQL linked list table to a table with concatenated values *
+*How to turn an SQL linked list table to a table with concatenated values*
 
 Linked List table
 
@@ -21,7 +21,7 @@ Concatenated Values table
 | 6      | t6, t7               |
 
 
- * SQL script *
+ *SQL script*
 
 WITH RecursiveCTE AS (
   SELECT
