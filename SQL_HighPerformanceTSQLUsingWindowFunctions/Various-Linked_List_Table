@@ -1,0 +1,52 @@
+* How to turn an SQL linked list table to a table with concatenated values *
+
+Linked List table
+
+| ID | name | next_ID |
+|----|------|---------|
+| 1  | t1   | 2       |
+| 2  | t2   | 3       |
+| 3  | t3   | 4       |
+| 4  | t4   | NULL    |
+| 5  | t5   | NULL    |
+| 6  | t6   | 7       |
+| 7  | t7   | NULL    |
+
+Concatenated Values table
+
+| new_id | names                |
+|--------|----------------------|
+| 1      | t1, t2, t3, t4       |
+| 5      | t5                   |
+| 6      | t6, t7               |
+
+
+ * SQL script *
+
+WITH RecursiveCTE AS (
+  SELECT
+    ID,
+    ROW_NUMBER() OVER (ORDER BY ID) AS new_id,
+    CAST(name AS NVARCHAR(MAX)) AS names
+  FROM
+    YourQueueTable
+  WHERE
+    next_ID IS NULL
+
+  UNION ALL
+
+  SELECT
+    q.ID,
+    n.new_id,
+    n.names + ', ' + q.name
+  FROM
+    RecursiveCTE n
+    JOIN YourQueueTable q ON n.ID = q.next_ID
+)
+SELECT
+  new_id,
+  names
+FROM
+  RecursiveCTE
+WHERE
+  names IS NOT NULL;  -- Select only the final records in the queue
