@@ -1,6 +1,8 @@
-*How to turn an SQL linked list table to a table with concatenated values*
+-- ---------------------------------------------------------------------------------
+How to turn an SQL linked list table to a table with concatenated values
+-- ---------------------------------------------------------------------------------
 
-Linked List table
+-- Linked List table
 
 | ID | name | next_ID |
 |----|------|---------|
@@ -12,7 +14,7 @@ Linked List table
 | 6  | t6   | 7       |
 | 7  | t7   | NULL    |
 
-Concatenated Values table
+-- Concatenated Values table
 
 | new_id | names                |
 |--------|----------------------|
@@ -21,8 +23,9 @@ Concatenated Values table
 | 6      | t6, t7               |
 
 
- *SQL script*
-
+-- ---------------------------------------------------------------------------------
+SQL script 
+-- ---------------------------------------------------------------------------------
 WITH RecursiveCTE AS (
   SELECT
     ID,
@@ -50,3 +53,51 @@ FROM
   RecursiveCTE
 WHERE
   names IS NOT NULL;  -- Select only the final records in the queue
+
+-- ---------------------------------------------------------------------------------
+How to create a linked list table
+-- ---------------------------------------------------------------------------------
+CREATE TABLE LinkedListTable (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    start_date DATE,
+    end_date DATE,
+    next_id INT NULL
+);
+
+INSERT INTO LinkedListTable (id, name, start_date, end_date, next_id)
+VALUES
+    (1, 'cus1', '2023-07-29', '2023-08-01', NULL),
+    (2, 'cus1', '2023-07-29', '2023-08-01', NULL),
+    (3, 'cus1', '2023-08-01', '2023-08-10', NULL),
+    (4, 'cus1', '2023-08-01', '2023-08-09', NULL),
+    (5, 'cus1', '2023-08-10', '2023-08-15', NULL),
+    (6, 'cus1', '2023-08-15', '2023-08-16', NULL),
+    (7, 'cus1', '2023-08-09', '2023-08-16', NULL),
+    (8, 'cus2', '2023-08-16', '2023-08-17', NULL);
+
+-- Update next_id based on the end_date, start_date, and name
+UPDATE LinkedListTable AS t1
+SET next_id = (
+    SELECT TOP 1 id
+    FROM LinkedListTable AS t2
+    WHERE t2.start_date = t1.end_date
+      AND t2.name = t1.name
+      AND t2.id <> t1.id -- Exclude the current record
+      AND t2.next_id IS NULL
+    ORDER BY t2.start_date
+);
+
+-- Display the result
+SELECT * FROM LinkedListTable;
+
+| id | name | start_date | end_date   | next_id |
+|----|------|------------|------------|---------|
+| 1  | cus1 | 2023-07-29 | 2023-08-01 | 3       |
+| 2  | cus1 | 2023-07-29 | 2023-08-01 | 4       |
+| 3  | cus1 | 2023-08-01 | 2023-08-10 | 5       |
+| 4  | cus1 | 2023-08-01 | 2023-08-09 | 7       |
+| 5  | cus1 | 2023-08-10 | 2023-08-15 | 6       |
+| 6  | cus1 | 2023-08-15 | 2023-08-16 | NULL    |
+| 7  | cus1 | 2023-08-09 | 2023-08-16 | NULL    |
+| 8  | cus2 | 2023-08-16 | 2023-08-17 | NULL    |
