@@ -7,4 +7,4 @@ The object is in the following form:
 [server_name].[database_name].[schema_name_2].[object_name]
 
 example:
-CREATE SYNONYM fakeApomast FOR BLEU.Vita.dbo.Apomast;
+CREATE SYNONYM fakeApomast FOR BLUE.Vita.dbo.Apomast;
