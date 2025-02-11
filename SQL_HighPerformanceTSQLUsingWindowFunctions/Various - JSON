@@ -1,0 +1,478 @@
+ drop PROCEDURE sd_einvoicing.InsertEInvoiceToERP;
+ GO
+
+/*
+  Insert the data in JSON format into the 3 EInvoice related tables
+
+  e.g.
+  DECLARE @Result bit;
+  EXEC sd_einvoicing.InsertEInvoiceToERP   @JSON_Invoice_Data = @json_invoice, @Result = @Result OUTPUT;
+  SELECT @Result AS InsertResult;
+*/
+CREATE PROCEDURE sd_einvoicing.InsertEInvoiceToERP
+(
+  @JSON_Invoice_Data NVARCHAR(max),
+  @Result bit OUTPUT
+)
+AS
+BEGIN
+  DECLARE @ErrorMessage   varchar(2000);
+  DECLARE @ErrorSeverity  tinyint;
+  DECLARE @ErrorState     tinyint;
+  
+  BEGIN TRY
+    BEGIN TRANSACTION
+  
+    DECLARE @Temp_Inserted_Invoice TABLE (
+      Invoice_ID INT NOT NULL
+    );
+    DECLARE @Invoice_ID INT;
+
+    -- INSERT EInvoice    
+    insert into sd_einvoicing.EInvoice (
+      Document_Type,
+      Document_Date,
+      Document_Number,
+      Document_Series,
+      Supplier_Code,
+      Supplier_Description,
+      Supplier_VAT_Number,
+      Currency,
+      Client_VAT_Number,
+      Client_Company,
+      Reason,
+      Comments,
+      Related_Document_Type,
+      Related_Document_Date,
+      Related_Document_Number,
+      Related_Document_Series,
+      Related_Purchase_Order,
+      Related_Purchase_Order_Date,
+      Amount_Initial,
+      Amount_Discount,
+      Amount_Net,
+      Amount_Tax,
+      Amount_Total,
+      AADE_Mark,
+      _PDF_Filename
+    )
+    OUTPUT 
+      INSERTED.ID INTO @Temp_Inserted_Invoice
+    SELECT 
+      TempEInvoice.Document_Type,
+      TempEInvoice.Document_Date,
+      TempEInvoice.Document_Number,
+      TempEInvoice.Document_Series,
+      TempEInvoice.Supplier_Code,
+      TempEInvoice.Supplier_Description,
+      TempEInvoice.Supplier_VAT_Number,
+      TempEInvoice.Currency,
+      TempEInvoice.Client_VAT_Number,
+      TempEInvoice.Client_Company,
+      TempEInvoice.Reason,
+      TempEInvoice.Comments,
+      TempEInvoice.Related_Document_Type,
+      TempEInvoice.Related_Document_Date,
+      TempEInvoice.Related_Document_Number,
+      TempEInvoice.Related_Document_Series,
+      TempEInvoice.Related_Purchase_Order,
+      TempEInvoice.Related_Purchase_Order_Date,
+      TempEInvoice.Amount_Initial,
+      TempEInvoice.Amount_Discount,
+      TempEInvoice.Amount_Net,
+      TempEInvoice.Amount_Tax,
+      TempEInvoice.Amount_Total,
+      TempEInvoice.AADE_Mark,
+      TempEInvoice._PDF_Filename
+    FROM 
+      OpenJson(@JSON_Invoice_Data) WITH (
+                                    Document_Type nvarchar(500) '$.Document_Type',
+                                    Document_Date date '$.Document_Date',
+                                    Document_Number nvarchar(500) '$.Document_Number',
+                                    Document_Series nvarchar(500) '$.Document_Series',
+                                    Supplier_Code nvarchar(500) '$.Supplier_Code',
+                                    Supplier_Description nvarchar(500) '$.Supplier_Description',
+                                    Supplier_VAT_Number nvarchar(500) '$.Supplier_VAT_Number',
+                                    Currency nvarchar(500) '$.Currency',
+                                    Client_VAT_Number nvarchar(500) '$.Client_VAT_Number',
+                                    Client_Company nvarchar(500) '$.Client_Company',
+                                    Reason nvarchar(max) '$.Reason',
+                                    Comments nvarchar(max) '$.Comments',
+                                    Related_Document_Type nvarchar(500) '$.Related_Document_Type',
+                                    Related_Document_Date date '$.Related_Document_Date',
+                                    Related_Document_Number nvarchar(500) '$.Related_Document_Number',
+                                    Related_Document_Series nvarchar(500) '$.Related_Document_Series',
+                                    Related_Purchase_Order nvarchar(500) '$.Related_Purchase_Order',
+                                    Related_Purchase_Order_Date nvarchar(500) '$.Related_Purchase_Order_Date',
+                                    Amount_Initial decimal(25, 10) '$.Amount_Initial',
+                                    Amount_Discount decimal(25, 10) '$.Amount_Discount',
+                                    Amount_Net decimal(25, 10) '$.Amount_Net',
+                                    Amount_Tax decimal(25, 10) '$.Amount_Tax',
+                                    Amount_Total decimal(25, 10) '$.Amount_Total',
+                                    AADE_Mark nvarchar(500) '$.AADE_Mark',
+                                    _PDF_Filename nvarchar(500) '$._PDF_Filename'
+                                  ) as TempEInvoice;
+    -- get the newly inserted Invoice_ID into a variable
+    set @Invoice_ID = (select TOP 1 Invoice_ID from @Temp_Inserted_Invoice);
+
+    -- INSERT EInvoice_Lines
+    insert into sd_einvoicing.EInvoice_Lines (
+      EInvoice_ID, 
+      Serial_Number,
+      Item_Code,
+      Item_Description,
+      Comments,
+      Quantity,
+      Unit,
+      Price,
+      Amount_Initial,
+      Discount_Percentage,
+      Amount_Discount,
+      Tax_Percentage,
+      Amount_Tax,
+      Amount_Net,
+      Amount_Total
+    )
+    SELECT 
+      @Invoice_ID,
+      TempEInvoice_Lines.Serial_Number,
+      TempEInvoice_Lines.Item_Code,
+      TempEInvoice_Lines.Item_Description,
+      TempEInvoice_Lines.Comments,
+      TempEInvoice_Lines.Quantity,
+      TempEInvoice_Lines.Unit,
+      TempEInvoice_Lines.Price,
+      TempEInvoice_Lines.Amount_Initial,
+      TempEInvoice_Lines.Discount_Percentage,
+      TempEInvoice_Lines.Amount_Discount,
+      TempEInvoice_Lines.Tax_Percentage,
+      TempEInvoice_Lines.Amount_Tax,
+      TempEInvoice_Lines.Amount_Net,
+      TempEInvoice_Lines.Amount_Total
+    FROM 
+      OpenJson(@JSON_Invoice_Data) WITH (
+                                     Lines NVARCHAR(MAX) '$.Lines' AS JSON
+                                   ) as TempEInvoice
+    CROSS APPLY OPENJSON(TempEInvoice.Lines) WITH (
+                                    Serial_Number int '$.Serial_Number',
+                                    Item_Code nvarchar(500) '$.Item_Code',
+                                    Item_Description nvarchar(500) '$.Item_Description',
+                                    Comments nvarchar(max) '$.Comments',
+                                    Quantity decimal(25, 10) '$.Quantity',
+                                    Unit nvarchar(500) '$.Unit',
+                                    Price decimal(25, 10) '$.Price',
+                                    Amount_Initial decimal(25, 10) '$.Amount_Initial',
+                                    Discount_Percentage decimal(25, 10) '$.Discount_Percentage',
+                                    Amount_Discount decimal(25, 10) '$.Amount_Discount',
+                                    Tax_Percentage decimal(25, 10) '$.Tax_Percentage',
+                                    Amount_Tax decimal(25, 10) '$.Amount_Tax',
+                                    Amount_Net decimal(25, 10) '$.Amount_Net',
+                                    Amount_Total decimal(25, 10) '$.Amount_Total'
+                                  ) AS TempEInvoice_Lines;
+    
+                                   
+    -- INSERT EInvoice_Tax_Summary
+    insert into sd_einvoicing.EInvoice_Tax_Summary (
+      EInvoice_ID, 
+      Serial_Number,
+      Tax_Percentage,
+      Tax_Description,
+      Amount_Net,
+      Amount_Tax
+    )
+    SELECT 
+      @Invoice_ID,
+      TempEInvoice_Tax_Summary.Serial_Number,
+      TempEInvoice_Tax_Summary.Tax_Percentage,
+      TempEInvoice_Tax_Summary.Tax_Description,
+      TempEInvoice_Tax_Summary.Amount_Net,
+      TempEInvoice_Tax_Summary.Amount_Tax
+    FROM 
+      OpenJson(@JSON_Invoice_Data) WITH (
+                                     Tax_Summary NVARCHAR(MAX) '$.Tax_Summary' AS JSON
+                                   ) as TempEInvoice
+    CROSS APPLY OPENJSON(TempEInvoice.Tax_Summary) WITH (
+                                    Serial_Number int '$.Serial_Number',
+                                    Tax_Percentage decimal(25, 10) '$.Tax_Percentage',
+                                    Tax_Description nvarchar(500) '$.Tax_Description',
+                                    Amount_Net decimal(25, 10) '$.Amount_Net',
+                                    Amount_Tax decimal(25, 10) '$.Amount_Tax'
+                                  ) AS TempEInvoice_Tax_Summary;
+                              
+
+    -- Return 1 for successful insertion
+    SET @Result = 1;
+    COMMIT;
+  END TRY
+  BEGIN CATCH
+    -- Handle errors
+    ROLLBACK;
+    SET @Result = 0;
+
+    SET @ErrorMessage  = ERROR_MESSAGE()
+    SET @ErrorSeverity = ERROR_SEVERITY()
+    SET @ErrorState    = ERROR_STATE()
+    RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState)
+	
+  END CATCH
+END;
+GO
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+
+DECLARE @json_invoice nvarchar(max) = N'{
+		"ID": 1,
+		"Document_Type": "ΠΑΓ",
+		"Document_Date": "2024-11-06",
+		"Document_Number": "000545099",
+		"Document_Series": "78",
+		"Supplier_VAT_Number": "094000362",
+		"Currency": "EUR",
+		"Client_VAT_Number": "099150734",
+		"Amount_Initial": 4049.14,
+		"Amount_Net": 4049.14,
+		"Amount_Total": 4049.14,
+		"_PDF_Filename": "Here there will be a proper filename.pdf",
+		"_Created_Date": "2025-01-30T13:08:42Z",
+      	"Lines": [
+		{
+			"ID": 11,
+			"EInvoice_ID": 1,
+			"Serial_Number": 110,
+			"Item_Code": "5201261060672",
+			"Item_Description": "Παλέτες μαύρες + βαρελιού (Λογ)",
+			"Quantity": 3.0,
+			"Unit": "ΚΙΒ",
+			"Price": 14.67,
+			"Amount_Initial": 44.01,
+			"Amount_Net": 44.01,
+			"Amount_Total": 44.01
+		},
+		{
+			"ID": 12,
+			"EInvoice_ID": 1,
+			"Serial_Number": 130,
+			"Item_Code": "5201261060665",
+			"Item_Description": "Φιάλη CO2 6 kg (Λογ)",
+			"Quantity": 14.0,
+			"Unit": "ΚΙΒ",
+			"Price": 49.89,
+			"Amount_Initial": 698.46,
+			"Amount_Net": 698.46,
+			"Amount_Total": 698.46
+		},
+		{
+			"ID": 13,
+			"EInvoice_ID": 1,
+			"Serial_Number": 150,
+			"Item_Code": "5201261060658",
+			"Item_Description": "Βαρέλια 20 lit (Λογ)",
+			"Quantity": 9.0,
+			"Unit": "ΚΙΒ",
+			"Price": 55.0,
+			"Amount_Initial": 495.0,
+			"Amount_Net": 495.0,
+			"Amount_Total": 495.0
+		},
+		{
+			"ID": 14,
+			"EInvoice_ID": 1,
+			"Serial_Number": 20,
+			"Item_Code": "5201261060733",
+			"Item_Description": "Κιβώτια 50 cl (Λογ)",
+			"Quantity": 1.0,
+			"Unit": "ΚΙΒ",
+			"Price": 3.23,
+			"Amount_Initial": 3.23,
+			"Amount_Net": 3.23,
+			"Amount_Total": 3.23
+		},
+		{
+			"ID": 15,
+			"EInvoice_ID": 1,
+			"Serial_Number": 40,
+			"Item_Code": "5201261060740",
+			"Item_Description": "Κιβώτια 33 cl (Λογ)",
+			"Quantity": 28.0,
+			"Unit": "ΚΙΒ",
+			"Price": 2.93,
+			"Amount_Initial": 82.04,
+			"Amount_Net": 82.04,
+			"Amount_Total": 82.04
+		},
+		{
+			"ID": 16,
+			"EInvoice_ID": 1,
+			"Serial_Number": 70,
+			"Item_Code": "5201261060610",
+			"Item_Description": "Φιάλες 33 cl (Λογ)",
+			"Quantity": 240.0,
+			"Unit": "ΚΙΒ",
+			"Price": 0.11,
+			"Amount_Initial": 26.4,
+			"Amount_Net": 26.4,
+			"Amount_Total": 26.4
+		},
+		{
+			"ID": 17,
+			"EInvoice_ID": 1,
+			"Serial_Number": 90,
+			"Item_Code": "5201261060641",
+			"Item_Description": "Βαρέλια 30 lit (Λογ)",
+			"Quantity": 45.0,
+			"Unit": "ΚΙΒ",
+			"Price": 60.0,
+			"Amount_Initial": 2700.0,
+			"Amount_Net": 2700.0,
+			"Amount_Total": 2700.0
+		}
+	]
+}';
+
+
+
+
+  DECLARE @Result bit;
+  EXEC sd_einvoicing.InsertEInvoiceToERP   @JSON_Invoice_Data = @json_invoice, @Result = @Result OUTPUT;
+  SELECT @Result AS InsertResult;
+
+select * from sd_einvoicing.EInvoice;
+select * from sd_einvoicing.EInvoice_Lines;
+select * from sd_einvoicing.EInvoice_Tax_Summary;
+
+
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+DECLARE @json_invoice nvarchar(max) = N'{
+		"ID": 2,
+		"Document_Type": "ΑΤΠ",
+		"Document_Date": "2024-11-12",
+		"Document_Number": "Ε  0467726",
+		"Document_Series": "Ε",
+		"Supplier_VAT_Number": "094191125",
+		"Currency": "EUR",
+		"Client_VAT_Number": "800555646",
+		"Related_Document_Number": "K10000468837",
+		"Related_Purchase_Order": "3028879/ΠΠΡ-IOL F&B",
+		"Amount_Discount": 553.13,
+		"Amount_Net": 1290.62,
+		"Amount_Tax": 309.75,
+		"Amount_Total": 1600.37,
+		"_PDF_Filename": "Here there will be a proper filename.pdf",
+		"_Created_Date": "2025-01-30T13:08:42Z",
+        "Lines": [
+		{
+			"ID": 21,
+			"EInvoice_ID": 2,
+			"Serial_Number": 1,
+			"Item_Code": "10004632",
+			"Item_Description": "ECOBRITE NEUTRASOFT CLEAN 20KG",
+			"Quantity": 1.0,
+			"Unit": "ΤΕΜ",
+			"Price": 164.92,
+			"Amount_Initial": 164.92,
+			"Discount_Percentage": 30.0,
+			"Amount_Discount": 49.48,
+			"Tax_Percentage": 24.0,
+			"Amount_Tax": 27.71,
+			"Amount_Net": 115.44,
+			"Amount_Total": 143.15
+		},
+		{
+			"ID": 22,
+			"EInvoice_ID": 2,
+			"Serial_Number": 2,
+			"Item_Code": "10005557",
+			"Item_Description": "ECOBRITE MAGIC EMULSION CLEAN 25KG",
+			"Quantity": 3.0,
+			"Unit": "ΤΕΜ",
+			"Price": 277.03,
+			"Amount_Initial": 831.09,
+			"Discount_Percentage": 30.0,
+			"Amount_Discount": 249.33,
+			"Tax_Percentage": 24.0,
+			"Amount_Tax": 139.62,
+			"Amount_Net": 581.76,
+			"Amount_Total": 721.38
+		},
+		{
+			"ID": 23,
+			"EInvoice_ID": 2,
+			"Serial_Number": 3,
+			"Item_Code": "30002390",
+			"Item_Description": "ECOBRITE PERFECT 20KG",
+			"Quantity": 2.0,
+			"Unit": "ΤΕΜ",
+			"Price": 155.76,
+			"Amount_Initial": 311.52,
+			"Discount_Percentage": 30.0,
+			"Amount_Discount": 93.46,
+			"Tax_Percentage": 24.0,
+			"Amount_Tax": 52.33,
+			"Amount_Net": 218.06,
+			"Amount_Total": 270.39
+		},
+		{
+			"ID": 24,
+			"EInvoice_ID": 2,
+			"Serial_Number": 4,
+			"Item_Code": "10005555",
+			"Item_Description": "ECOBRITE DELICATE CLEAN 20KG",
+			"Quantity": 3.0,
+			"Unit": "ΤΕΜ",
+			"Price": 161.86,
+			"Amount_Initial": 485.58,
+			"Discount_Percentage": 30.0,
+			"Amount_Discount": 145.67,
+			"Tax_Percentage": 24.0,
+			"Amount_Tax": 81.58,
+			"Amount_Net": 339.91,
+			"Amount_Total": 81.58
+		},
+		{
+			"ID": 25,
+			"EInvoice_ID": 2,
+			"Serial_Number": 5,
+			"Item_Code": "30001754",
+			"Item_Description": "ECOBRITE DESTAINER ΔΟΧ 20 KG",
+			"Quantity": 1.0,
+			"Unit": "ΤΕΜ",
+			"Price": 50.64,
+			"Amount_Initial": 50.64,
+			"Discount_Percentage": 30.0,
+			"Amount_Discount": 0.0,
+			"Tax_Percentage": 24.0,
+			"Amount_Tax": 8.51,
+			"Amount_Net": 35.45,
+			"Amount_Total": 43.96
+		}
+	],
+    "Tax_Summary": [
+		{
+			"ID": 21,
+			"EInvoice_ID": 2,
+			"Serial_Number": 1,
+			"Tax_Percentage": 24.0,
+			"Amount_Net": 1290.62,
+			"Amount_Tax": 309.75
+		}
+	]
+}';
+
+
+
+  DECLARE @Result bit;
+  EXEC sd_einvoicing.InsertEInvoiceToERP   @JSON_Invoice_Data = @json_invoice, @Result = @Result OUTPUT;
+  SELECT @Result AS InsertResult;
+
+select * from sd_einvoicing.EInvoice;
+select * from sd_einvoicing.EInvoice_Lines;
+select * from sd_einvoicing.EInvoice_Tax_Summary;
