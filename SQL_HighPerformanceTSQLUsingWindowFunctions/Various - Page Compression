@@ -51,6 +51,7 @@ EXEC sp_executesql @SQL;
 -- SELECT * FROM #CompressionResults;
 -- SELECT #CompressionResults.*, Round(((1-(SizeWithRequestedCompression*1.0)/(SizeWithCurrentCompression*1.0))*100.0), 2) as CompressionPercentage FROM #CompressionResults;
 SELECT #CompressionResults.*, cast(Round(((1-(SizeWithRequestedCompression*1.0)/(SizeWithCurrentCompression*1.0))*100.0), 2) as decimal(5,2)) as CompressionPercentage FROM #CompressionResults;
+SELECT /*@SchemaName,*/ sum(SizeWithCurrentCompression) as SizeWithCurrentCompression, sum(SizeWithRequestedCompression) as SizeWithRequestedCompression, cast(Round(((1-(sum(SizeWithRequestedCompression)*1.0)/(sum(SizeWithCurrentCompression)*1.0))*100.0), 2) as decimal(5,2)) as CompressionPercentage FROM #CompressionResults;
 
 -- Drop temp table (optional, as it will auto-drop at session end)
 DROP TABLE #CompressionResults;
