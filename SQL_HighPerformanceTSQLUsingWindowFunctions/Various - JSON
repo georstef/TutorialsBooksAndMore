@@ -1,13 +1,36 @@
- drop PROCEDURE sd_einvoicing.InsertEInvoiceToERP;
- GO
+drop table if exists sd_einvoicing._Logs;
+
+-- Logs
+CREATE TABLE sd_einvoicing._Logs (
+  ID int IDENTITY(1, 1) NOT NULL,
+  Description nvarchar(max) COLLATE Latin1_General_CI_AI NULL,
+  Date_Created datetimeoffset(0) CONSTRAINT _Logs_Date_Created_df DEFAULT SYSDATETIMEOFFSET() NOT NULL,
+  CONSTRAINT _Logs_ID_pk PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+  
+-- ---------------------------------------------  
+-- ---------------------------------------------  
+-- ---------------------------------------------  
+-- ---------------------------------------------  
+
+drop PROCEDURE sd_einvoicing.InsertEInvoiceToERP;
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
 
 /*
   Insert the data in JSON format into the 3 EInvoice related tables
-
   e.g.
+
   DECLARE @Result bit;
   EXEC sd_einvoicing.InsertEInvoiceToERP   @JSON_Invoice_Data = @json_invoice, @Result = @Result OUTPUT;
   SELECT @Result AS InsertResult;
+
+  3 Feb 2025, 10:21 | George S.: initial version
 */
 CREATE PROCEDURE sd_einvoicing.InsertEInvoiceToERP
 (
@@ -16,9 +39,19 @@ CREATE PROCEDURE sd_einvoicing.InsertEInvoiceToERP
 )
 AS
 BEGIN
-  DECLARE @ErrorMessage   varchar(2000);
-  DECLARE @ErrorSeverity  tinyint;
-  DECLARE @ErrorState     tinyint;
+  SET NOCOUNT ON;
+  DECLARE @LogMessage nvarchar(max);
+  DECLARE @GUID uniqueidentifier  
+  
+  SET @GUID = NEWID()
+
+  -- Log the beginning of the process
+  BEGIN TRANSACTION;
+  SET @LogMessage = CONCAT_WS(' | ', 'START', 'procedure InsertEInvoiceToERP', @GUID, @JSON_Invoice_Data);
+  insert into sd_einvoicing._Logs (Description) values (@LogMessage);
+  COMMIT;
+  
+  -- WAITFOR DELAY '00:00:05';
   
   BEGIN TRY
     BEGIN TRANSACTION
@@ -29,7 +62,7 @@ BEGIN
     DECLARE @Invoice_ID INT;
 
     -- INSERT EInvoice    
-    insert into sd_einvoicing.EInvoice (
+    insert into sd_einvoicing.EInvoice WITH (ROWLOCK) (
       Document_Type,
       Document_Date,
       Document_Number,
@@ -54,10 +87,10 @@ BEGIN
       Amount_Tax,
       Amount_Total,
       AADE_Mark,
-      _PDF_Filename
-    )
+      _Resource_Filename
+    ) 
     OUTPUT 
-      INSERTED.ID INTO @Temp_Inserted_Invoice
+      INSERTED.ID INTO @Temp_Inserted_Invoice 
     SELECT 
       TempEInvoice.Document_Type,
       TempEInvoice.Document_Date,
@@ -83,7 +116,7 @@ BEGIN
       TempEInvoice.Amount_Tax,
       TempEInvoice.Amount_Total,
       TempEInvoice.AADE_Mark,
-      TempEInvoice._PDF_Filename
+      TempEInvoice._Resource_Filename
     FROM 
       OpenJson(@JSON_Invoice_Data) WITH (
                                     Document_Type nvarchar(500) '$.Document_Type',
@@ -110,13 +143,13 @@ BEGIN
                                     Amount_Tax decimal(25, 10) '$.Amount_Tax',
                                     Amount_Total decimal(25, 10) '$.Amount_Total',
                                     AADE_Mark nvarchar(500) '$.AADE_Mark',
-                                    _PDF_Filename nvarchar(500) '$._PDF_Filename'
+                                    _Resource_Filename nvarchar(500) '$._Resource_Filename'
                                   ) as TempEInvoice;
     -- get the newly inserted Invoice_ID into a variable
     set @Invoice_ID = (select TOP 1 Invoice_ID from @Temp_Inserted_Invoice);
 
     -- INSERT EInvoice_Lines
-    insert into sd_einvoicing.EInvoice_Lines (
+    insert into sd_einvoicing.EInvoice_Lines WITH (ROWLOCK) (
       EInvoice_ID, 
       Serial_Number,
       Item_Code,
@@ -128,6 +161,7 @@ BEGIN
       Amount_Initial,
       Discount_Percentage,
       Amount_Discount,
+	  Amount_Extra_Charge,
       Tax_Percentage,
       Amount_Tax,
       Amount_Net,
@@ -145,6 +179,7 @@ BEGIN
       TempEInvoice_Lines.Amount_Initial,
       TempEInvoice_Lines.Discount_Percentage,
       TempEInvoice_Lines.Amount_Discount,
+	  TempEInvoice_Lines.Amount_Extra_Charge,
       TempEInvoice_Lines.Tax_Percentage,
       TempEInvoice_Lines.Amount_Tax,
       TempEInvoice_Lines.Amount_Net,
@@ -164,6 +199,7 @@ BEGIN
                                     Amount_Initial decimal(25, 10) '$.Amount_Initial',
                                     Discount_Percentage decimal(25, 10) '$.Discount_Percentage',
                                     Amount_Discount decimal(25, 10) '$.Amount_Discount',
+									Amount_Extra_Charge decimal(25, 10) '$.Amount_Extra_Charge',
                                     Tax_Percentage decimal(25, 10) '$.Tax_Percentage',
                                     Amount_Tax decimal(25, 10) '$.Amount_Tax',
                                     Amount_Net decimal(25, 10) '$.Amount_Net',
@@ -172,7 +208,7 @@ BEGIN
     
                                    
     -- INSERT EInvoice_Tax_Summary
-    insert into sd_einvoicing.EInvoice_Tax_Summary (
+    insert into sd_einvoicing.EInvoice_Tax_Summary WITH (ROWLOCK) (
       EInvoice_ID, 
       Serial_Number,
       Tax_Percentage,
@@ -202,22 +238,26 @@ BEGIN
 
     -- Return 1 for successful insertion
     SET @Result = 1;
+
+    insert into sd_einvoicing._Logs (Description) values (CONCAT_WS(' | ', '   END | SUCCESS | InsertEInvoiceToERP', @GUID));
     COMMIT;
   END TRY
   BEGIN CATCH
     -- Handle errors
     ROLLBACK;
+
+    -- Return 0 for failed insertion
     SET @Result = 0;
 
-    SET @ErrorMessage  = ERROR_MESSAGE()
-    SET @ErrorSeverity = ERROR_SEVERITY()
-    SET @ErrorState    = ERROR_STATE()
-    RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState)
-	
+    -- Logging Fail
+    BEGIN TRANSACTION;
+    insert into sd_einvoicing._Logs (Description) values (CONCAT_WS(' | ', '***END | FAIL | InsertEInvoiceToERP', @GUID, ERROR_MESSAGE()));
+    COMMIT;
+
   END CATCH
+  SET NOCOUNT OFF;
 END;
 GO
-
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -236,7 +276,7 @@ DECLARE @json_invoice nvarchar(max) = N'{
 		"Amount_Initial": 4049.14,
 		"Amount_Net": 4049.14,
 		"Amount_Total": 4049.14,
-		"_PDF_Filename": "Here there will be a proper filename.pdf",
+		"_Resource_Filename": "Here there will be a proper filename.pdf",
 		"_Created_Date": "2025-01-30T13:08:42Z",
       	"Lines": [
 		{
@@ -366,7 +406,7 @@ DECLARE @json_invoice nvarchar(max) = N'{
 		"Amount_Net": 1290.62,
 		"Amount_Tax": 309.75,
 		"Amount_Total": 1600.37,
-		"_PDF_Filename": "Here there will be a proper filename.pdf",
+		"_Resource_Filename": "Here there will be a proper filename.pdf",
 		"_Created_Date": "2025-01-30T13:08:42Z",
         "Lines": [
 		{
