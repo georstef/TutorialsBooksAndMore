@@ -1,0 +1,53 @@
+-- get XXXX compression benefit for a single table 
+EXEC sp_estimate_data_compression_savings <schema>, <tablename>, NULL, NULL, <compression type>;
+
+-- get PAGE compression benefit for a single table 
+EXEC sp_estimate_data_compression_savings 'sd_costcontrol', 'Balance_Sheet', NULL, NULL, 'PAGE' ;
+
+-- get ROW compression benefit for a single table 
+EXEC sp_estimate_data_compression_savings 'sd_costcontrol', 'Balance_Sheet', NULL, NULL, 'ROW' ;
+
+-- add PAGE compression to a table
+ALTER TABLE dbo.TestCompression REBUILD PARTITION = ALL WITH  (DATA_COMPRESSION = PAGE) 
+GO
+
+-- -------------------------------------------------------------------
+-- get table with PAGE compression benefits for all tables in a schema
+-- -------------------------------------------------------------------
+DECLARE @SchemaName NVARCHAR(128) = 'sd_costcontrol'; -- Change schema name as needed
+DECLARE @SQL NVARCHAR(MAX) = '';
+
+-- Create a temp table to store results
+IF OBJECT_ID('tempdb..#CompressionResults') IS NOT NULL
+    DROP TABLE #CompressionResults;
+
+CREATE TABLE #CompressionResults (
+    TableName SYSNAME,
+    SchemaName varchar(max),
+    IndexId INT,
+    PartitionNumber INT,
+    SizeWithCurrentCompression BIGINT,
+    SizeWithRequestedCompression BIGINT,
+    SampleSizeWithCurrentCompression BIGINT,
+    SampleSizeWithRequestedCompression BIGINT
+);
+
+-- Generate dynamic SQL for all tables in the schema
+SELECT @SQL = @SQL +
+    'INSERT INTO #CompressionResults (TableName, SchemaName, IndexId, PartitionNumber, SizeWithCurrentCompression, SizeWithRequestedCompression, SampleSizeWithCurrentCompression, SampleSizeWithRequestedCompression)
+    EXEC sp_estimate_data_compression_savings ''' + @SchemaName + ''', ''' + t.name + ''', NULL, NULL, ''PAGE''; ' + CHAR(13)
+FROM sys.tables t
+JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE s.name = @SchemaName;
+
+-- Execute the generated SQL
+EXEC sp_executesql @SQL;
+
+-- Return the final result set
+SELECT #CompressionResults.*, Round(((1-(SizeWithRequestedCompression*1.0)/(SizeWithCurrentCompression*1.0))*100.0), 2) as CompressionPercentage FROM #CompressionResults;
+
+-- Drop temp table (optional, as it will auto-drop at session end)
+DROP TABLE #CompressionResults;
+-- -------------------------------------------------------------------
+-- end of script
+-- -------------------------------------------------------------------
