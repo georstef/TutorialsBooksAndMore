@@ -1,0 +1,13 @@
+-- script that returns the size of all tables in the DB
+SELECT SCHEMA_NAME(t.schema_id)               AS SchemaName,
+       t.name                                 AS TableName,
+       SUM(ps.row_count)                      AS RowCounts,
+       cast(SUM(ps.reserved_page_count) * 8.0 / 1024.0 as decimal(12,2)) AS SizeInMB,
+       cast(SUM(ps.reserved_page_count) * 8.0 / 1024.0 / 1024.0 as decimal(12,2)) AS SizeInGB
+FROM sys.tables t
+         INNER JOIN
+     sys.dm_db_partition_stats ps
+     ON t.object_id = ps.object_id
+WHERE ps.index_id IN (0, 1) -- Only heap or clustered index (ignore LOBs and others)
+GROUP BY SCHEMA_NAME(t.schema_id), t.name
+ORDER BY SizeInMB DESC
