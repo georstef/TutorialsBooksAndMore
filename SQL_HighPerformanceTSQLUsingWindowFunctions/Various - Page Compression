@@ -1,3 +1,7 @@
+-- more on the sql server table compression subject
+-- https://learn.microsoft.com/en-us/sql/relational-databases/data-compression/enable-compression-on-a-table-or-index?view=azuresqldb-current
+-- https://thomaslarock.com/2018/01/when-to-use-row-or-page-compression-in-sql-server/
+
 -- get XXXX compression benefit for a single table 
 EXEC sp_estimate_data_compression_savings <schema>, <tablename>, NULL, NULL, <compression type>;
 
